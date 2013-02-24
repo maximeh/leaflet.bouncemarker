@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <title>leaflet-bouncemarker demo</title>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+  <style>
+    html, body, #map { margin: 0; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+  <script src="https://github.com/maximeh/leaflet-bouncemarker/raw/master/bouncemarker.js"></script>
+  <script>
+      var map = L.map('map').setView([48.8, 2.35], 2);
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      new L.Marker([48.85, 2.35]).addTo(map);
+  </script>
+</body>
+</html>
