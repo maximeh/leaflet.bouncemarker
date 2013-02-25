@@ -25,10 +25,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Retain the value of the original onAdd function
+var originalOnAdd = L.Marker.prototype.onAdd;
+
 L.Marker.include({
 
-  _toPoint: function(latlng){ return map.latLngToContainerPoint(latlng); },
-  _toLatLng: function(point){ return map.containerPointToLatLng(point); },
+  _toPoint: function(latlng){ return this._map.latLngToContainerPoint(latlng); },
+  _toLatLng: function(point){ return this._map.containerPointToLatLng(point); },
 
   _animate: function(opts) {
     var start = new Date
@@ -74,13 +77,7 @@ L.Marker.include({
   },
 
   onAdd: function (map) {
-    this._map = map;
-    map.on('viewreset', this.update, this);
-    this._initIcon();
-    this.update();
-    if (map.options.zoomAnimation && map.options.markerZoomAnimation) {
-      map.on('zoomanim', this._animateZoom, this);
-    }
+    originalOnAdd.call(this, map)
 
     this._point = this._toPoint(this._latlng);
     var top_y = this._toPoint(map.getBounds()._northEast).y;
