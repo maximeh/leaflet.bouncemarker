@@ -30,15 +30,21 @@ var originalOnAdd = L.Marker.prototype.onAdd;
 
 L.Marker.include({
 
-  _toPoint: function(latlng){ return this._map.latLngToContainerPoint(latlng); },
-  _toLatLng: function(point){ return this._map.containerPointToLatLng(point); },
+  _toPoint: function (latlng) {
+    return this._map.latLngToContainerPoint(latlng);
+  },
+  _toLatLng: function (point) {
+    return this._map.containerPointToLatLng(point);
+  },
 
-  _animate: function(opts) {
+  _animate: function (opts) {
     var start = new Date();
-    var id = setInterval(function() {
+    var id = setInterval(function () {
       var timePassed = new Date() - start;
       var progress = timePassed / opts.duration;
-      if (progress > 1) { progress = 1; }
+      if (progress > 1) {
+        progress = 1;
+      }
       var delta = opts.delta(progress);
       opts.step(delta);
       if (progress === 1) {
@@ -47,7 +53,7 @@ L.Marker.include({
     }, opts.delay || 10);
   },
 
-  _move: function(delta, duration) {
+  _move: function (delta, duration) {
     var to = this._point.y;
     var self = this;
 
@@ -55,27 +61,27 @@ L.Marker.include({
       delay: 10,
       duration: duration || 1000, // 1 sec by default
       delta: delta,
-      step: function(delta) {
-        self._drop_point.y = to*delta;
+      step: function (delta) {
+        self._drop_point.y = to * delta;
         self.setLatLng(self._toLatLng(self._drop_point));
       }
     });
   },
 
   // Many thanks to Robert Penner for this function
-  _easeOutBounce: function(pos) {
-    if ((pos) < (1/2.75)) {
-      return (7.5625*pos*pos);
-    } else if (pos < (2/2.75)) {
-      return (7.5625*(pos-=(1.5/2.75))*pos + 0.75);
-    } else if (pos < (2.5/2.75)) {
-      return (7.5625*(pos-=(2.25/2.75))*pos + 0.9375);
+  _easeOutBounce: function (pos) {
+    if ((pos) < (1 / 2.75)) {
+      return (7.5625 * pos * pos);
+    } else if (pos < (2 / 2.75)) {
+      return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+    } else if (pos < (2.5 / 2.75)) {
+      return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
     } else {
-      return (7.5625*(pos-=(2.625/2.75))*pos + 0.984375);
+      return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
     }
   },
 
-  onAdd: function(map) {
+  onAdd: function (map) {
     originalOnAdd.call(this, map);
 
     this._point = this._toPoint(this._latlng);
