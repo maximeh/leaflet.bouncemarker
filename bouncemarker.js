@@ -25,69 +25,70 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Retain the value of the original onAdd function
-var originalOnAdd = L.Marker.prototype.onAdd;
+(function () {
 
-L.Marker.include({
+  // Retain the value of the original onAdd function
+  var originalOnAdd = L.Marker.prototype.onAdd;
 
-  _toPoint: function (latlng) {
-    return this._map.latLngToContainerPoint(latlng);
-  },
-  _toLatLng: function (point) {
-    return this._map.containerPointToLatLng(point);
-  },
+  L.Marker.include({
 
-  _animate: function (opts) {
-    var start = new Date();
-    var id = setInterval(function () {
-      var timePassed = new Date() - start;
-      var progress = timePassed / opts.duration;
-      if (progress > 1) {
-        progress = 1;
+    _toPoint: function (latlng) {
+      return this._map.latLngToContainerPoint(latlng);
+    },
+    _toLatLng: function (point) {
+      return this._map.containerPointToLatLng(point);
+    },
+
+    _animate: function (opts) {
+      var start = new Date();
+      var id = setInterval(function () {
+        var timePassed = new Date() - start;
+        var progress = timePassed / opts.duration;
+        if (progress > 1) {
+          progress = 1;
+        }
+        var delta = opts.delta(progress);
+        opts.step(delta);
+        if (progress === 1) {
+          clearInterval(id);
+        }
+      }, opts.delay || 10);
+    },
+
+    _move: function (delta, duration) {
+      var to = this._point.y;
+      var self = this;
+
+      this._animate({
+        delay: 10,
+        duration: duration || 1000, // 1 sec by default
+        delta: delta,
+        step: function (delta) {
+          self._drop_point.y = to * delta;
+          self.setLatLng(self._toLatLng(self._drop_point));
+        }
+      });
+    },
+
+    // Many thanks to Robert Penner for this function
+    _easeOutBounce: function (pos) {
+      if ((pos) < (1 / 2.75)) {
+        return (7.5625 * pos * pos);
+      } else if (pos < (2 / 2.75)) {
+        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+      } else if (pos < (2.5 / 2.75)) {
+        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+      } else {
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
       }
-      var delta = opts.delta(progress);
-      opts.step(delta);
-      if (progress === 1) {
-        clearInterval(id);
-      }
-    }, opts.delay || 10);
-  },
+    },
 
-  _move: function (delta, duration) {
-    var to = this._point.y;
-    var self = this;
-
-    this._animate({
-      delay: 10,
-      duration: duration || 1000, // 1 sec by default
-      delta: delta,
-      step: function (delta) {
-        self._drop_point.y = to * delta;
-        self.setLatLng(self._toLatLng(self._drop_point));
-      }
-    });
-  },
-
-  // Many thanks to Robert Penner for this function
-  _easeOutBounce: function (pos) {
-    if ((pos) < (1 / 2.75)) {
-      return (7.5625 * pos * pos);
-    } else if (pos < (2 / 2.75)) {
-      return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
-    } else if (pos < (2.5 / 2.75)) {
-      return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
-    } else {
-      return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    onAdd: function (map) {
+      originalOnAdd.call(this, map);
+      this._point = this._toPoint(this._latlng);
+      var top_y = this._toPoint(map.getBounds()._northEast).y;
+      this._drop_point = new L.Point(this._point.x, top_y);
+      this._move(this._easeOutBounce);
     }
-  },
-
-  onAdd: function (map) {
-    originalOnAdd.call(this, map);
-
-    this._point = this._toPoint(this._latlng);
-    var top_y = this._toPoint(map.getBounds()._northEast).y;
-    this._drop_point = new L.Point(this._point.x, top_y);
-    this._move(this._easeOutBounce);
-  }
-
-});
+  });
+})();
