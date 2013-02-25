@@ -34,18 +34,17 @@ L.Marker.include({
   _toLatLng: function(point){ return this._map.containerPointToLatLng(point); },
 
   _animate: function(opts) {
-    var start = new Date
+    var start = new Date();
     var id = setInterval(function() {
-      var timePassed = new Date - start
-      var progress = timePassed / opts.duration
-      if (progress > 1) progress = 1
-        var delta = opts.delta(progress)
-      opts.step(delta)
-      if (progress == 1) {
-        clearInterval(id)
+      var timePassed = new Date() - start;
+      var progress = timePassed / opts.duration;
+      if (progress > 1) { progress = 1; }
+      var delta = opts.delta(progress);
+      opts.step(delta);
+      if (progress === 1) {
+        clearInterval(id);
       }
-    }, opts.delay || 10)
-
+    }, opts.delay || 10);
   },
 
   _move: function(delta, duration) {
@@ -60,7 +59,7 @@ L.Marker.include({
         self._drop_point.y = to*delta;
         self.setLatLng(self._toLatLng(self._drop_point));
       }
-    })
+    });
   },
 
   // Many thanks to Robert Penner for this function
@@ -76,14 +75,13 @@ L.Marker.include({
     }
   },
 
-  onAdd: function (map) {
-    originalOnAdd.call(this, map)
+  onAdd: function(map) {
+    originalOnAdd.call(this, map);
 
     this._point = this._toPoint(this._latlng);
     var top_y = this._toPoint(map.getBounds()._northEast).y;
     this._drop_point = new L.Point(this._point.x, top_y);
     this._move(this._easeOutBounce);
-
-  },
+  }
 
 });
