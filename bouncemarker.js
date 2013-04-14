@@ -83,12 +83,19 @@
       }
     },
 
-    onAdd: function (map) {
-      originalOnAdd.call(this, map);
+    bounce: function() {
       this._point = this._toPoint(this._latlng);
-      var top_y = this._toPoint(map.getBounds()._northEast).y;
+      var top_y = this._toPoint(this._map.getBounds()._northEast).y;
       this._drop_point = new L.Point(this._point.x, top_y);
       this._move(this._easeOutBounce);
+    },
+
+    onAdd: function (map) {
+      originalOnAdd.call(this, map);
+      if (typeof this.options.autoBounce === 'undefined' ||
+          this.options.autoBounce === true){
+          this.bounce();
+      }
     }
   });
 })();
