@@ -83,11 +83,11 @@
       }
     },
 
-    bounce: function() {
+    bounce: function(duration) {
       this._point = this._toPoint(this._latlng);
       var top_y = this._toPoint(this._map.getBounds()._northEast).y;
       this._drop_point = new L.Point(this._point.x, top_y);
-      this._move(this._easeOutBounce);
+      this._move(this._easeOutBounce, duration);
     },
 
     onAdd: function (map) {
