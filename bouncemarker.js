@@ -50,13 +50,15 @@
         var delta = opts.delta(progress);
         opts.step(delta);
         if (progress === 1) {
+          opts.end();
           clearInterval(id);
         }
       }, opts.delay || 10);
     },
 
     _move: function (delta, duration) {
-      var start_point = this._drop_point.y,
+      var original = L.latLng(this._latlng),
+          start_point = this._drop_point.y,
           distance = this._point.y - start_point;
       var self = this;
 
@@ -67,6 +69,9 @@
         step: function (delta) {
           self._drop_point.y = start_point + (distance * delta);
           self.setLatLng(self._toLatLng(self._drop_point));
+        },
+        end: function () {
+          self.setLatLng(original);
         }
       });
     },
