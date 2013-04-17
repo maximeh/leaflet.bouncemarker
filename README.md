@@ -24,8 +24,14 @@ Marker as usual :
 new L.Marker([48.85, 2.35]).addTo(map);
 ```
 
-You may use the autoBounce option if you do not want your marker to bounce when
+You may use the ``autoBounce`` option if you do not want all your markers to bounce when
 added to the map (which is the default behavior):
+
+```javascript
+L.Marker.mergeOptions({autoBounce: false});
+```
+
+or for a single marker:
 
 ```javascript
 new L.Marker([48.85, 2.35], {autoBounce: false}).addTo(map);
