@@ -21,23 +21,26 @@ To benefit from the bouncing effect, you have nothing to do, just use your
 Marker as usual :
 
 ```javascript
-new L.Marker([48.85, 2.35]).addTo(map);
+L.marker([48.85, 2.35]).addTo(map);
 ```
 
 You may use the autoBounce option if you do not want your marker to bounce when
 added to the map (which is the default behavior):
 
 ```javascript
-new L.Marker([48.85, 2.35], {autoBounce: false}).addTo(map);
+L.marker([48.85, 2.35], {autoBounce: false}).addTo(map);
 ```
 
-You can also use the bounce() function to make a marker bounce, when you want it
+You can also use the ``bounce()`` function to make a marker bounce, when you want it
 to :
 
 ```javascript
-var my_point = new L.Marker([48.85, 2.35], {autoBounce: false});
-my_point.addTo(map);
-my_point.bounce();
+L.marker([48.85, 2.35], {autoBounce: false})
+ .addTo(map)
+ .on('click', function () {
+    this.bounce(500, 100);  // Bounce during 500ms from 100px height.
+  });
 ```
+
 
 
