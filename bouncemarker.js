@@ -56,7 +56,8 @@
     },
 
     _move: function (delta, duration) {
-      var to = this._point.y;
+      var start_point = this._drop_point.y,
+          distance = this._point.y - start_point;
       var self = this;
 
       this._animate({
@@ -64,7 +65,7 @@
         duration: duration || 1000, // 1 sec by default
         delta: delta,
         step: function (delta) {
-          self._drop_point.y = to * delta;
+          self._drop_point.y = start_point + (distance * delta);
           self.setLatLng(self._toLatLng(self._drop_point));
         }
       });
@@ -83,11 +84,14 @@
       }
     },
 
-    bounce: function() {
+    // Bounce : if height in pixels is not specified, drop from top.
+    bounce: function(duration, height) {
       this._point = this._toPoint(this._latlng);
-      var top_y = this._toPoint(this._map.getBounds()._northEast).y;
+      var top_y = height === undefined ?
+                  this._toPoint(this._map.getBounds()._northEast).y :
+                  this._point.y - height;
       this._drop_point = new L.Point(this._point.x, top_y);
-      this._move(this._easeOutBounce);
+      this._move(this._easeOutBounce, duration);
     },
 
     onAdd: function (map) {
