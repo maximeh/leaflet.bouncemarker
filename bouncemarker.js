@@ -29,6 +29,8 @@
 
   // Retain the value of the original onAdd function
   var originalOnAdd = L.Marker.prototype.onAdd;
+  // Add bounceonAdd options
+  L.Marker.mergeOptions({bounceOnAdd: false});
 
   L.Marker.include({
 
@@ -101,8 +103,7 @@
 
     onAdd: function (map) {
       originalOnAdd.call(this, map);
-      if (typeof this.options.autoBounce === 'undefined' ||
-          this.options.autoBounce === true){
+      if (this.options.bounceOnAdd) {
           this.bounce();
       }
     }
