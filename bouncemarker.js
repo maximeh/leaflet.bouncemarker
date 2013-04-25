@@ -104,7 +104,7 @@
     onAdd: function (map) {
       originalOnAdd.call(this, map);
       if (this.options.bounceOnAdd) {
-          this.bounce();
+          this.bounce(this.options.bounceOnAddDuration, this.options.bounceOnAddHeight);
       }
     }
   });
