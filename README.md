@@ -18,27 +18,33 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 ```
 To benefit from the bouncing effect, you must set bounceOnAdd option when
-initializing your Marker :
+initializing your Marker:
 
 ```javascript
-L.marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+L.marker([48.85, 2.35], { bounceOnAdd: true }).addTo(map);
+```
+
+You can also use the optional bounceOnAddDuration and bounceOnAddHeight arguments to customise the animation:
+
+```javascript
+L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddDuration: 500, bounceOnAddHeight: 100 }).addTo(map); // take 500ms to bounce from 100px height
 ```
 
 If you don't want your Marker to bounce on add, simply ignore the option to
-obtain the default behavior :
+obtain the default behavior:
 
 ```javascript
 L.marker([48.85, 2.35]).addTo(map);
 ```
 
 You can also use the ``bounce()`` function to make a marker bounce, when you
-want it to :
+want it to:
 
 ```javascript
 L.marker([48.85, 2.35])
  .addTo(map)
  .on('click', function () {
-    this.bounce(500, 100);  // Bounce during 500ms from 100px height.
+    this.bounce(500, 100); // take 500ms to bounce from 100px height
   });
 ```
 
