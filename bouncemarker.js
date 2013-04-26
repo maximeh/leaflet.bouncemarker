@@ -29,8 +29,9 @@
 
   // Retain the value of the original onAdd function
   var originalOnAdd = L.Marker.prototype.onAdd;
+
   // Add bounceonAdd options
-  L.Marker.mergeOptions({bounceOnAdd: false});
+  L.Marker.mergeOptions({ bounceOnAdd: false, bounceOnAddDuration: 1000, bounceOnAddHeight: -1 });
 
   L.Marker.include({
 
@@ -93,10 +94,13 @@
 
     // Bounce : if height in pixels is not specified, drop from top.
     bounce: function(duration, height) {
+      var top_y;
       this._point = this._toPoint(this._latlng);
-      var top_y = height === undefined ?
-                  this._toPoint(this._map.getBounds()._northEast).y :
-                  this._point.y - height;
+      if(height === undefined || height < 0) {
+        top_y = this._toPoint(this._map.getBounds()._northEast).y;
+      } else {
+        top_y = this._point.y - height;
+      }
       this._drop_point = new L.Point(this._point.x, top_y);
       this._move(this._easeOutBounce, duration);
     },
@@ -104,7 +108,7 @@
     onAdd: function (map) {
       originalOnAdd.call(this, map);
       if (this.options.bounceOnAdd) {
-          this.bounce();
+          this.bounce(this.options.bounceOnAddDuration, this.options.bounceOnAddHeight);
       }
     }
   });
