@@ -31,7 +31,11 @@
   var originalOnAdd = L.Marker.prototype.onAdd;
 
   // Add bounceonAdd options
-  L.Marker.mergeOptions({ bounceOnAdd: false, bounceOnAddDuration: 1000, bounceOnAddHeight: -1 });
+  L.Marker.mergeOptions({
+    bounceOnAdd: false,
+    bounceOnAddDuration: 1000,
+    bounceOnAddHeight: -1
+  });
 
   L.Marker.include({
 
@@ -60,9 +64,9 @@
     },
 
     _move: function (delta, duration) {
-      var original = L.latLng(this._latlng),
-          start_point = this._drop_point.y,
-          distance = this._point.y - start_point;
+      var original = L.latLng(this._orig_latlng),
+        start_point = this._drop_point.y,
+        distance = this._point.y - start_point;
       var self = this;
 
       this._animate({
@@ -93,22 +97,43 @@
     },
 
     // Bounce : if height in pixels is not specified, drop from top.
-    bounce: function(duration, height) {
+    // If duration is not specified animation is 1s long.
+    bounce: function (duration, height) {
+      this._drop_point = this._getDropPoint(height);
+      this._move(this._easeOutBounce, duration);
+    },
+
+    // This will get you a drop point given a height.
+    // If no height is given, the top y will be used.
+    _getDropPoint: function (height) {
       var top_y;
-      this._point = this._toPoint(this._latlng);
-      if(height === undefined || height < 0) {
+      if (height === undefined || height < 0) {
         top_y = this._toPoint(this._map.getBounds()._northEast).y;
       } else {
         top_y = this._point.y - height;
       }
-      this._drop_point = new L.Point(this._point.x, top_y);
-      this._move(this._easeOutBounce, duration);
+      return new L.Point(this._point.x, top_y);
     },
 
     onAdd: function (map) {
+      this._map = map;
+      this._orig_latlng = this._latlng;
+      // Keep original coordinates in pixel
+      this._point = this._toPoint(this._latlng);
+
+      // We need to have our drop point BEFORE adding the marker to the map
+      // otherwise, it would create a flicker. (The marker would appear at final
+      // location then move to its drop location, and you may be able to see it.)
+      if (this.options.bounceOnAdd === true) {
+        this._drop_point = this._getDropPoint(this.options.bounceOnAddHeight);
+        this.setLatLng(this._toLatLng(this._drop_point));
+      }
+
+      // Call leaflet original method to add the Marker to the map.
       originalOnAdd.call(this, map);
-      if (this.options.bounceOnAdd) {
-          this.bounce(this.options.bounceOnAddDuration, this.options.bounceOnAddHeight);
+
+      if (this.options.bounceOnAdd === true) {
+        this.bounce(this.options.bounceOnAddDuration, this.options.bounceOnAddHeight);
       }
     }
   });
