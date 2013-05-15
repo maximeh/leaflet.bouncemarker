@@ -106,6 +106,8 @@
     // This will get you a drop point given a height.
     // If no height is given, the top y will be used.
     _getDropPoint: function (height) {
+      // Get current coordidates in pixel
+      this._point = this._toPoint(this._orig_latlng);
       var top_y;
       if (height === undefined || height < 0) {
         top_y = this._toPoint(this._map.getBounds()._northEast).y;
@@ -117,9 +119,8 @@
 
     onAdd: function (map) {
       this._map = map;
+      // Keep original latitude and longitude
       this._orig_latlng = this._latlng;
-      // Keep original coordinates in pixel
-      this._point = this._toPoint(this._latlng);
 
       // We need to have our drop point BEFORE adding the marker to the map
       // otherwise, it would create a flicker. (The marker would appear at final
