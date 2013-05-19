@@ -106,6 +106,8 @@
     // Bounce : if height in pixels is not specified, drop from top.
     // If duration is not specified animation is 1s long.
     bounce: function (duration, height) {
+      // Keep original map center
+      this._orig_map_center = this._map.project(this._map.getCenter());
       this._drop_point = this._getDropPoint(height);
       this._move(this._easeOutBounce, duration);
     },
@@ -128,8 +130,6 @@
       this._map = map;
       // Keep original latitude and longitude
       this._orig_latlng = this._latlng;
-      // Keep original map center
-      this._orig_map_center = this._map.project(this._map.getCenter());
 
       // We need to have our drop point BEFORE adding the marker to the map
       // otherwise, it would create a flicker. (The marker would appear at final
