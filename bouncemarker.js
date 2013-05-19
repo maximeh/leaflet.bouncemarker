@@ -65,8 +65,9 @@
 
     _move: function (delta, duration) {
       var original = L.latLng(this._orig_latlng),
-        start_point = this._drop_point.y,
-        distance = this._point.y - start_point;
+          start_y = this._drop_point.y,
+          start_x = this._drop_point.x,
+          distance = this._point.y - start_y;
       var self = this;
 
       this._animate({
@@ -74,7 +75,13 @@
         duration: duration || 1000, // 1 sec by default
         delta: delta,
         step: function (delta) {
-          self._drop_point.y = start_point + (distance * delta);
+          self._drop_point.y = 
+            start_y 
+            + (distance * delta) 
+            - (self._map.project(self._map.getCenter()).y - self._orig_map_center.y);
+          self._drop_point.x = 
+            start_x 
+            - (self._map.project(self._map.getCenter()).x - self._orig_map_center.x); 
           self.setLatLng(self._toLatLng(self._drop_point));
         },
         end: function () {
@@ -121,6 +128,8 @@
       this._map = map;
       // Keep original latitude and longitude
       this._orig_latlng = this._latlng;
+      // Keep original map center
+      this._orig_map_center = this._map.project(this._map.getCenter());
 
       // We need to have our drop point BEFORE adding the marker to the map
       // otherwise, it would create a flicker. (The marker would appear at final
