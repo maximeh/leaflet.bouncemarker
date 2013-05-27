@@ -86,6 +86,7 @@
         },
         end: function () {
           self.setLatLng(original);
+          self.fire('bounce:end');
         }
       });
     },
