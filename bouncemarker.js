@@ -63,6 +63,9 @@
       }, opts.delay || 10);
     },
 
+  _onEnd: function(){
+	},
+
     _move: function (delta, duration) {
       var original = L.latLng(this._orig_latlng),
           start_y = this._drop_point.y,
@@ -86,10 +89,11 @@
         },
         end: function () {
           self.setLatLng(original);
+		  self._onEnd();
         }
       });
     },
-
+	
     // Many thanks to Robert Penner for this function
     _easeOutBounce: function (pos) {
       if ((pos) < (1 / 2.75)) {
@@ -102,11 +106,15 @@
         return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
       }
     },
-
+	
     // Bounce : if height in pixels is not specified, drop from top.
     // If duration is not specified animation is 1s long.
-    bounce: function (duration, height) {
-      // Keep original map center
+    bounce: function (options) {
+		var duration = options.duration,
+			height = options.height,
+			onEnd = options.onEnd;
+	  if (typeof onEnd != "undefined") this._onEnd = onEnd;
+	  // Keep original map center
       this._orig_map_center = this._map.project(this._map.getCenter());
       this._drop_point = this._getDropPoint(height);
       this._move(this._easeOutBounce, duration);
