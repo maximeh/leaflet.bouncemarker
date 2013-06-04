@@ -48,5 +48,15 @@ L.marker([48.85, 2.35])
   });
 ```
 
+as well as the conclusion-aware:
+
+```javascript
+L.marker([48.85, 2.35])
+ .addTo(map)
+ .on('click', function () {
+    this.bounceOpts({duration: 500, height: 100, onEnd: function(){ console.log("done!"); }});
+  });
+```
+
 
 
