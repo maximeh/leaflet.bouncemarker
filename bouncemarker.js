@@ -77,13 +77,13 @@
         duration: duration || 1000, // 1 sec by default
         delta: delta,
         step: function (delta) {
-          self._drop_point.y = 
-            start_y 
-            + (distance * delta) 
+          self._drop_point.y =
+            start_y
+            + (distance * delta)
             - (self._map.project(self._map.getCenter()).y - self._orig_map_center.y);
-          self._drop_point.x = 
-            start_x 
-            - (self._map.project(self._map.getCenter()).x - self._orig_map_center.x); 
+          self._drop_point.x =
+            start_x
+            - (self._map.project(self._map.getCenter()).x - self._orig_map_center.x);
           self.setLatLng(self._toLatLng(self._drop_point));
         },
         end: function () {
@@ -156,7 +156,7 @@
         if (typeof this.options.bounceOnAddDuration !== 'undefined') {
           this.options.bounceOnAddOptions.duration = this.options.bounceOnAddDuration;
         }
-        
+
         // backward compatibility
         if (typeof this.options.bounceOnAddHeight !== 'undefined') {
           this.options.bounceOnAddOptions.height = this.options.bounceOnAddHeight;
