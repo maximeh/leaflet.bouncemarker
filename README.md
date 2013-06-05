@@ -50,8 +50,8 @@ want it to:
 
 ```javascript
 L.marker([48.85, 2.35])
- .addTo(map)
- .on('click', function () {
+  .addTo(map)
+  .on('click', function () {
     this.bounce(500, 100); // take 500ms to bounce from 100px height
   });
 ```
