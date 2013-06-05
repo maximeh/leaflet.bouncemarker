@@ -47,6 +47,14 @@ L.marker([48.85, 2.35])
     this.bounce(500, 100); // take 500ms to bounce from 100px height
   });
 ```
+or passing an object as parameter:
+```javascript
+L.marker([48.85, 2.35])
+ .addTo(map)
+ .on('click', function () {
+    this.bounce({duration:500, height:100}); // take 500ms to bounce from 100px height
+  });
+```
 
 
 
