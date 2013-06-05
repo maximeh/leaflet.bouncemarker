@@ -6,6 +6,14 @@ bounce when you add it on a map on whenever you want it to.
 
 Watch the [demo](http://maximeh.github.com/leaflet.bouncemarker/).
 
+Version
+-------
+
+Things may break in master, so please don't use this in production.
+There is [tags](https://github.com/maximeh/leaflet.bouncemarker/tags) which can be used in production.
+
+Last stable: [v1.0](https://github.com/maximeh/leaflet.bouncemarker/tree/v1.0)
+
 Usage
 -----
 
