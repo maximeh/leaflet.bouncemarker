@@ -103,9 +103,24 @@
       }
     },
 
-    // Bounce : if height in pixels is not specified, drop from top.
-    // If duration is not specified animation is 1s long.
-    bounce: function (duration, height) {
+    // Bounce : if options.height in pixels is not specified, drop from top.
+    // If options.duration is not specified animation is 1s long.
+    bounce: function (options) {
+      var duration, height;
+
+      //backward compatibility
+      if (typeof options === "number") {
+        options = {
+          duration: arguments[0],
+          height: arguments[1]
+        }
+      }
+
+      options = options || {};
+
+      duration: options.duration;
+      height: options.height;
+
       // Keep original map center
       this._orig_map_center = this._map.project(this._map.getCenter());
       this._drop_point = this._getDropPoint(height);
