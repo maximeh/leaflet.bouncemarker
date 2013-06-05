@@ -29,6 +29,10 @@ You can also use the optional bounceOnAddDuration and bounceOnAddHeight argument
 ```javascript
 L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddDuration: 500, bounceOnAddHeight: 100 }).addTo(map); // take 500ms to bounce from 100px height
 ```
+or pass that optional arguments in an object:
+```javascript
+L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 100} }).addTo(map); // take 500ms to bounce from 100px height
+```
 
 If you don't want your Marker to bounce on add, simply ignore the option to
 obtain the default behavior:
@@ -45,6 +49,14 @@ L.marker([48.85, 2.35])
  .addTo(map)
  .on('click', function () {
     this.bounce(500, 100); // take 500ms to bounce from 100px height
+  });
+```
+or passing an object as parameter:
+```javascript
+L.marker([48.85, 2.35])
+ .addTo(map)
+ .on('click', function () {
+    this.bounce({duration:500, height:100}); // take 500ms to bounce from 100px height
   });
 ```
 

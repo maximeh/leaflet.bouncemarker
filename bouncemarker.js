@@ -33,8 +33,10 @@
   // Add bounceonAdd options
   L.Marker.mergeOptions({
     bounceOnAdd: false,
-    bounceOnAddDuration: 1000,
-    bounceOnAddHeight: -1
+    bounceOnAddOptions: {
+      duration: 1000,
+      height: -1
+    }
   });
 
   L.Marker.include({
@@ -103,9 +105,24 @@
       }
     },
 
-    // Bounce : if height in pixels is not specified, drop from top.
-    // If duration is not specified animation is 1s long.
-    bounce: function (duration, height) {
+    // Bounce : if options.height in pixels is not specified, drop from top.
+    // If options.duration is not specified animation is 1s long.
+    bounce: function (options) {
+      var duration, height;
+
+      options = options || {};
+
+      //backward compatibility
+      if (typeof options === "number") {
+        options = {
+          duration: arguments[0],
+          height: arguments[1]
+        }
+      }
+
+      duration = options.duration;
+      height = options.height;
+
       // Keep original map center
       this._orig_map_center = this._map.project(this._map.getCenter());
       this._drop_point = this._getDropPoint(height);
@@ -135,7 +152,17 @@
       // otherwise, it would create a flicker. (The marker would appear at final
       // location then move to its drop location, and you may be able to see it.)
       if (this.options.bounceOnAdd === true) {
-        this._drop_point = this._getDropPoint(this.options.bounceOnAddHeight);
+        // backward compatibility
+        if (typeof this.options.bounceOnAddDuration !== 'undefined') {
+          this.options.bounceOnAddOptions.duration = this.options.bounceOnAddDuration;
+        }
+        
+        // backward compatibility
+        if (typeof this.options.bounceOnAddHeight !== 'undefined') {
+          this.options.bounceOnAddOptions.height = this.options.bounceOnAddHeight;
+        }
+
+        this._drop_point = this._getDropPoint(this.options.bounceOnAddOptions.height);
         this.setLatLng(this._toLatLng(this._drop_point));
       }
 
@@ -143,7 +170,7 @@
       originalOnAdd.call(this, map);
 
       if (this.options.bounceOnAdd === true) {
-        this.bounce(this.options.bounceOnAddDuration, this.options.bounceOnAddHeight);
+        this.bounce(this.options.bounceOnAddOptions);
       }
     }
   });
