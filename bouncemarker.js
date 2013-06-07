@@ -108,11 +108,7 @@
 
     // Bounce : if options.height in pixels is not specified, drop from top.
     // If options.duration is not specified animation is 1s long.
-    bounce: function (options, end_callback) {
-      if (typeof options === "function") {
-          end_callback = options;
-          options = null;
-      }
+    bounce: function (options) {
       options = options || {duration: 1000, height: -1};
 
       //backward compatibility
@@ -124,7 +120,7 @@
       // Keep original map center
       this._orig_map_center = this._map.project(this._map.getCenter());
       this._drop_point = this._getDropPoint(options.height);
-      this._move(this._easeOutBounce, options.duration, end_callback);
+      this._move(this._easeOutBounce, options.duration, options.onEnd);
     },
 
     // This will get you a drop point given a height.
