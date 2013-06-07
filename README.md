@@ -27,30 +27,33 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 ##onAdd
 
-To benefit from the bouncing effect when adding your marker, you must set
-bounceOnAdd option when initializing your Marker:
+Make your marker bounce when you add them to a map.
 
 ```javascript
-L.marker([48.85, 2.35], { bounceOnAdd: true }).addTo(map);
+L.marker([48.85, 2.35], boolean bounceOnAdd, object bounceOnAddOptions).addTo(map);
 ```
 
-If you don't want your Marker to bounce on add, simply ignore the option to
-obtain the default behavior:
+###bounceOnAdd (boolean) (optionnal)
 
-```javascript
-L.marker([48.85, 2.35]).addTo(map);
-```
+If true, your marker will bounce when added to the map. Default to false.
 
-You can also pass some options arguments as an object to customise the animation:
+###bounceOnAddOptions (object) (optionnal)
+
+* bounceOnAddDuration (integer) (Default: 1000)
+
+    The duration of the animation in milliseconds.
+
+* bounceOnAddHeight (integer) (Default: top_y)
+
+    The height (in pixel) at which the marker is "dropped".
+    The default is the top point on the y axis of the Marker.
+
+**Example:**
 ```javascript
-// take 500ms to bounce from 100px height
 L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 100} }).addTo(map);
 ```
 
-**DEPRECATED METHOD**
-
-You can also use the optional bounceOnAddDuration and bounceOnAddHeight
-arguments to customise the animation:
+**DEPRECATED**
 
 ```javascript
 // take 500ms to bounce from 100px height
@@ -59,23 +62,34 @@ L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddDuration: 500, bounceOnA
 
 ##bounce
 
-You can also use the ``bounce()`` function to make a marker bounce, when you
-want it to (you can also pass an object to customise the animation):
+Make a marker bounce at anytime you wish.
 
 ```javascript
-L.marker([48.85, 2.35])
-  .addTo(map)
-  .on('click', function () {
-    this.bounce({
-        duration: 500,
-        height: 100
-      });
-  });
+bounce(object options, function callback);
 ```
 
-**DEPRECATED METHOD**
+###options (object) (optionnal)
 
-You can also pass arguments to bounce() to customise the marker's animation:
+* duration (integer) (Default: 1000)
+
+    The duration of the animation in milliseconds.
+
+* height (integer) (Default: top_y)
+
+    The height (in pixel) at which the marker is "dropped".
+    The default is the top point on the y axis of the Marker.
+
+###callback (function) (optionnal)
+
+If you specify the callback parameter, it will be called at the end of the
+animation.
+
+**Example:**
+```javascript
+marker.bounce({duration: 500, height: 100}, function(){console.log("done")});
+```
+
+**DEPRECATED**
 
 ```javascript
 L.marker([48.85, 2.35])
