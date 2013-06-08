@@ -30,7 +30,7 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 Make your marker bounce when you add them to a map.
 
 ```javascript
-L.marker([48.85, 2.35], boolean bounceOnAdd, object bounceOnAddOptions).addTo(map);
+L.marker([48.85, 2.35], { boolean bounceOnAdd, object bounceOnAddOptions, function bounceOnAddCallback }).addTo(map);
 ```
 
 ###bounceOnAdd (boolean) (optionnal)
@@ -48,9 +48,14 @@ If true, your marker will bounce when added to the map. Default to false.
     The height (in pixel) at which the marker is "dropped".
     The default is the top point on the y axis of the Marker.
 
+###bounceOnAddCallback (function) (optionnal)
+
+If you specify the callback parameter, it will be called at the end of the
+animation.
+
 **Example:**
 ```javascript
-L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 100} }).addTo(map);
+L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 100}, bounceOnAddCallback: function() {console.log("done");} }).addTo(map);
 ```
 
 **DEPRECATED**

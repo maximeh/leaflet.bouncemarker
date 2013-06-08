@@ -36,7 +36,8 @@
     bounceOnAddOptions: {
       duration: 1000,
       height: -1
-    }
+    },
+    bounceOnAddCallback: function() {},
   });
 
   L.Marker.include({
@@ -168,7 +169,7 @@
       originalOnAdd.call(this, map);
 
       if (this.options.bounceOnAdd === true) {
-        this.bounce(this.options.bounceOnAddOptions);
+        this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
       }
     }
   });
