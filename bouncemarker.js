@@ -27,8 +27,9 @@
 
 (function () {
 
-  // Retain the value of the original onAdd function
+  // Retain the value of the original onAdd and onRemove functions
   var originalOnAdd = L.Marker.prototype.onAdd;
+  var originalOnRemove = L.Marker.prototype.onRemove;
 
   // Add bounceonAdd options
   L.Marker.mergeOptions({
@@ -50,8 +51,10 @@
     },
 
     _animate: function (opts) {
+      var self = this;
+
       var start = new Date();
-      var id = setInterval(function () {
+      self.id = setInterval(function () {
         var timePassed = new Date() - start;
         var progress = timePassed / opts.duration;
         if (progress > 1) {
@@ -61,7 +64,7 @@
         opts.step(delta);
         if (progress === 1) {
           opts.end();
-          clearInterval(id);
+          clearInterval(self.id);
         }
       }, opts.delay || 10);
     },
@@ -171,6 +174,11 @@
       if (this.options.bounceOnAdd === true) {
         this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
       }
+    },
+
+    onRemove: function (map) {
+      clearInterval(this.id);
+      originalOnRemove.call(this, map);
     }
   });
 })();
