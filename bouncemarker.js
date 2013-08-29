@@ -54,7 +54,7 @@
       var self = this;
 
       var start = new Date();
-      self.intervalId = setInterval(function () {
+      self._intervalId = setInterval(function () {
         var timePassed = new Date() - start;
         var progress = timePassed / opts.duration;
         if (progress > 1) {
@@ -64,7 +64,7 @@
         opts.step(delta);
         if (progress === 1) {
           opts.end();
-          clearInterval(self.intervalId);
+          clearInterval(self._intervalId);
         }
       }, opts.delay || 10);
     },
@@ -182,7 +182,7 @@
     },
 
     onRemove: function (map) {
-      clearInterval(this.intervalId);
+      clearInterval(this._intervalId);
       originalOnRemove.call(this, map);
     }
   });
