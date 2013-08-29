@@ -159,7 +159,7 @@
       // location then move to its drop location, and you may be able to see it.)
       if (this.options.bounceOnAdd === true) {
         // backward compatibility
-        if (typeof this.options.bounceOnAddDuration !== 'undefined') {ori
+        if (typeof this.options.bounceOnAddDuration !== 'undefined') {
           this.options.bounceOnAddOptions.duration = this.options.bounceOnAddDuration;
         }
 
