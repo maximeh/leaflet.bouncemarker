@@ -28,8 +28,8 @@
 (function () {
 
   // Retain the value of the original onAdd and onRemove functions
-  var originalOnAdd = L.Marker.prototype.onAdd;
-  var originalOnRemove = L.Marker.prototype.onRemove;
+  var originalOnAdd = L.Marker.prototype.onAdd,
+      originalOnRemove = L.Marker.prototype.onRemove;
 
   // Add bounceonAdd options
   L.Marker.mergeOptions({
@@ -43,18 +43,17 @@
 
   L.Marker.include({
 
-    _toPoint: function (latlng) {
+    _bounceToPoint: function (latlng) {
       return this._map.latLngToContainerPoint(latlng);
     },
-    _toLatLng: function (point) {
+    _bounceToLatLng: function (point) {
       return this._map.containerPointToLatLng(point);
     },
 
-    _animate: function (opts) {
+    _bounceAnimate: function (opts) {
       var self = this;
-
       var start = new Date();
-      self.id = setInterval(function () {
+      self._bounceId = setInterval(function () {
         var timePassed = new Date() - start;
         var progress = timePassed / opts.duration;
         if (progress > 1) {
@@ -64,31 +63,31 @@
         opts.step(delta);
         if (progress === 1) {
           opts.end();
-          clearInterval(self.id);
+          clearInterval(self._bounceId);
         }
       }, opts.delay || 10);
     },
 
-    _move: function (delta, duration, callback) {
-      var original = L.latLng(this._orig_latlng),
-          start_y = this._drop_point.y,
-          start_x = this._drop_point.x,
+    _bounceMove: function (delta, duration, callback) {
+      var original = L.latLng(this._bounceOrigLatLng),
+          start_y = this._bounceDropPoint.y,
+          start_x = this._bounceDropPoint.x,
           distance = this._point.y - start_y;
       var self = this;
 
-      this._animate({
+      this._bounceAnimate({
         delay: 10,
         duration: duration || 1000, // 1 sec by default
         delta: delta,
         step: function (delta) {
-          self._drop_point.y =
+          self._bounceDropPoint.y =
             start_y
             + (distance * delta)
-            - (self._map.project(self._map.getCenter()).y - self._orig_map_center.y);
-          self._drop_point.x =
+            - (self._map.project(self._map.getCenter()).y - self._bounceOrigMapCenter.y);
+          self._bounceDropPoint.x =
             start_x
-            - (self._map.project(self._map.getCenter()).x - self._orig_map_center.x);
-          self.setLatLng(self._toLatLng(self._drop_point));
+            - (self._map.project(self._map.getCenter()).x - self._bounceOrigMapCenter.x);
+          self.setLatLng(self._bounceToLatLng(self._bounceDropPoint));
         },
         end: function () {
           self.setLatLng(original);
@@ -98,7 +97,7 @@
     },
 
     // Many thanks to Robert Penner for this function
-    _easeOutBounce: function (pos) {
+    _bounceEaseOut: function (pos) {
       if ((pos) < (1 / 2.75)) {
         return (7.5625 * pos * pos);
       } else if (pos < (2 / 2.75)) {
@@ -112,7 +111,12 @@
 
     // Bounce : if options.height in pixels is not specified, drop from top.
     // If options.duration is not specified animation is 1s long.
-    bounce: function (options, end_callback) {
+    bounce: function(options, end_callback) {
+       this._bounceOrigLatLng = this.getLatLng();
+       this._bounce(options, end_callback);
+    },
+
+    _bounce: function (options, end_callback) {
       if (typeof options === "function") {
           end_callback = options;
           options = null;
@@ -126,19 +130,19 @@
       }
 
       // Keep original map center
-      this._orig_map_center = this._map.project(this._map.getCenter());
-      this._drop_point = this._getDropPoint(options.height);
-      this._move(this._easeOutBounce, options.duration, end_callback);
+      this._bounceOrigMapCenter = this._map.project(this._map.getCenter());
+      this._bounceDropPoint = this._getBounceDropPoint(options.height);
+      this._bounceMove(this._bounceEaseOut, options.duration, end_callback);
     },
 
     // This will get you a drop point given a height.
     // If no height is given, the top y will be used.
-    _getDropPoint: function (height) {
+    _getBounceDropPoint: function (height) {
       // Get current coordidates in pixel
-      this._point = this._toPoint(this._orig_latlng);
+      this._point = this._bounceToPoint(this._bounceOrigLatLng);
       var top_y;
       if (height === undefined || height < 0) {
-        top_y = this._toPoint(this._map.getBounds()._northEast).y;
+        top_y = this._bounceToPoint(this._map.getBounds()._northEast).y;
       } else {
         top_y = this._point.y - height;
       }
@@ -148,7 +152,7 @@
     onAdd: function (map) {
       this._map = map;
       // Keep original latitude and longitude
-      this._orig_latlng = this._latlng;
+      this._bounceOrigLatLng = this._latlng;
 
       // We need to have our drop point BEFORE adding the marker to the map
       // otherwise, it would create a flicker. (The marker would appear at final
@@ -164,20 +168,20 @@
           this.options.bounceOnAddOptions.height = this.options.bounceOnAddHeight;
         }
 
-        this._drop_point = this._getDropPoint(this.options.bounceOnAddOptions.height);
-        this.setLatLng(this._toLatLng(this._drop_point));
+        this._bounceDropPoint = this._getBounceDropPoint(this.options.bounceOnAddOptions.height);
+        this.setLatLng(this._bounceToLatLng(this._bounceDropPoint));
       }
 
       // Call leaflet original method to add the Marker to the map.
       originalOnAdd.call(this, map);
 
       if (this.options.bounceOnAdd === true) {
-        this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
+        this._bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
       }
     },
 
     onRemove: function (map) {
-      clearInterval(this.id);
+      clearInterval(this._bounceId);
       originalOnRemove.call(this, map);
     }
   });
