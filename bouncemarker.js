@@ -112,7 +112,12 @@
 
     // Bounce : if options.height in pixels is not specified, drop from top.
     // If options.duration is not specified animation is 1s long.
-    bounce: function (options, end_callback) {
+    bounce: function(options, end_callback) {
+       this._orig_latlng = this.getLatLng();
+       this._bounce(options, end_callback);
+    },
+
+    _bounce: function (options, end_callback) {
       if (typeof options === "function") {
           end_callback = options;
           options = null;
@@ -172,7 +177,7 @@
       originalOnAdd.call(this, map);
 
       if (this.options.bounceOnAdd === true) {
-        this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
+        this._bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
       }
     },
 
