@@ -12,7 +12,7 @@ Things may break in master, so please don't use this in production.
 There is [tags](https://github.com/maximeh/leaflet.bouncemarker/tags) which can
 be used in production.
 
-Last stable: [v1.0](https://github.com/maximeh/leaflet.bouncemarker/tree/v1.0)
+Last stable: [v1.0](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.0)
 
 #Usage
 
@@ -30,7 +30,12 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 Make your marker bounce when you add them to a map.
 
 ```javascript
-L.marker([48.85, 2.35], { boolean bounceOnAdd, object bounceOnAddOptions, function bounceOnAddCallback }).addTo(map);
+L.marker([48.85, 2.35], 
+  { 
+    boolean bounceOnAdd, 
+    object bounceOnAddOptions, 
+    function bounceOnAddCallback 
+  }).addTo(map);
 ```
 
 ###bounceOnAdd (boolean) (optionnal)
@@ -55,14 +60,12 @@ animation.
 
 **Example:**
 ```javascript
-L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 100}, bounceOnAddCallback: function() {console.log("done");} }).addTo(map);
-```
-
-**DEPRECATED**
-
-```javascript
-// take 500ms to bounce from 100px height
-L.marker([48.85, 2.35], { bounceOnAdd: true, bounceOnAddDuration: 500, bounceOnAddHeight: 100 }).addTo(map);
+L.marker([48.85, 2.35], 
+  { 
+    bounceOnAdd: true, 
+    bounceOnAddOptions: {duration: 500, height: 100}, 
+    bounceOnAddCallback: function() {console.log("done");}
+  }).addTo(map);
 ```
 
 ##bounce
@@ -71,6 +74,14 @@ Make a marker bounce at anytime you wish.
 
 ```javascript
 bounce(object options, function callback);
+```
+
+**Example:**
+```javascript
+marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+marker.on('click', function () {
+    marker.bounce({duration: 500, height: 100});
+});
 ```
 
 ###options (object) (optionnal)
@@ -92,15 +103,5 @@ animation.
 **Example:**
 ```javascript
 marker.bounce({duration: 500, height: 100}, function(){console.log("done")});
-```
-
-**DEPRECATED**
-
-```javascript
-L.marker([48.85, 2.35])
-  .addTo(map)
-  .on('click', function () {
-    this.bounce(500, 100);
-  });
 ```
 
