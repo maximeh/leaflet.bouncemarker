@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Loop Bouncing Marker</title>
+    <style>
+      html, body, #map {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      button {
+        position: absolute;
+        top: 20px;
+        width: 100px;
+        font-size: 15px;
+      }
+      #start {
+        left: 100px;
+      }
+      #stop {
+        left: 230px;
+      }
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="../bouncemarker.js"></script>
+  </head>
+  <body>
+    <div id="map">
+    </div>
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+    <script type="text/javascript">
+      var map = L.map('map').setView([51.505, -0.09], 13);
+      L.tileLayer('http://{s}.tiles.mapbox.com/v3/mapid/{z}/{x}/{y}.png', {
+          attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+          maxZoom: 18
+      }).addTo(map);
+
+      var marker = L.marker(map.getCenter()).addTo(map);
+
+      $('#start').on('click', function(e){
+        e.preventDefault();
+        marker.bounce({duration: 500, height: 20, loop: true});
+      });
+      $('#stop').on('click', function(e){
+        e.preventDefault();
+        marker.stop();
+      })
+    </script>
+  </body>
+</html>

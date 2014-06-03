@@ -95,6 +95,26 @@ marker.on('click', function () {
     The height (in pixel) at which the marker is "dropped".
     The default is the top point on the y axis of the Marker.
 
+* loop (boolean) (Default: false)
+
+    Whether to loop the dropping animation.
+
+##stop
+
+Stop the loop animation.
+
+```javascript
+marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+marker.on('click', function () {
+    marker.bounce({duration: 500, height: 100, loop: true});
+});
+//assume there is a button to stop
+stopButton.on('click', function(){
+    marker.stop();
+});
+
+```
+
 ###callback (function) (optional)
 
 If you specify the callback parameter, it will be called at the end of the

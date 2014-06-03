@@ -63,13 +63,17 @@
         var delta = opts.delta(progress);
         opts.step(delta);
         if (progress === 1) {
-          opts.end();
-          clearInterval(self._intervalId);
+          if (opts.loop){
+            start = new Date();
+          } else {
+            opts.end();
+            clearInterval(self._intervalId);
+          }
         }
       }, opts.delay || 10);
     },
 
-    _bounceMotion: function (delta, duration, callback) {
+    _bounceMotion: function (delta, duration, callback, loop) {
       var original = L.latLng(this._origLatlng),
           start_y = this._dropPoint.y,
           start_x = this._dropPoint.x,
@@ -80,6 +84,7 @@
         delay: 10,
         duration: duration || 1000, // 1 sec by default
         delta: delta,
+        loop: loop,
         step: function (delta) {
           self._dropPoint.y =
             start_y
@@ -122,7 +127,7 @@
           endCallback = options;
           options = null;
       }
-      options = options || {duration: 1000, height: -1};
+      options = options || {duration: 1000, height: -1, loop: false};
 
       //backward compatibility
       if (typeof options === "number") {
@@ -133,7 +138,7 @@
       // Keep original map center
       this._origMapCenter = this._map.project(this._map.getCenter());
       this._dropPoint = this._getDropPoint(options.height);
-      this._bounceMotion(this._easeOutBounce, options.duration, endCallback);
+      this._bounceMotion(this._easeOutBounce, options.duration, endCallback, options.loop);
     },
 
     // This will get you a drop point given a height.
@@ -184,6 +189,11 @@
     onRemove: function (map) {
       clearInterval(this._intervalId);
       originalOnRemove.call(this, map);
+    },
+
+    stop: function(){
+      this.setLatLng(L.latLng(this._origLatlng));
+      clearInterval(this._intervalId);
     }
   });
 })();
