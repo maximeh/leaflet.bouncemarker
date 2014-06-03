@@ -38,11 +38,11 @@ L.marker([48.85, 2.35],
   }).addTo(map);
 ```
 
-###bounceOnAdd (boolean) (optionnal)
+###bounceOnAdd (boolean) (optional)
 
 If true, your marker will bounce when added to the map. Default to false.
 
-###bounceOnAddOptions (object) (optionnal)
+###bounceOnAddOptions (object) (optional)
 
 * bounceOnAddDuration (integer) (Default: 1000)
 
@@ -53,7 +53,7 @@ If true, your marker will bounce when added to the map. Default to false.
     The height (in pixel) at which the marker is "dropped".
     The default is the top point on the y axis of the Marker.
 
-###bounceOnAddCallback (function) (optionnal)
+###bounceOnAddCallback (function) (optional)
 
 If you specify the callback parameter, it will be called at the end of the
 animation.
@@ -84,7 +84,7 @@ marker.on('click', function () {
 });
 ```
 
-###options (object) (optionnal)
+###options (object) (optional)
 
 * duration (integer) (Default: 1000)
 
@@ -95,7 +95,7 @@ marker.on('click', function () {
     The height (in pixel) at which the marker is "dropped".
     The default is the top point on the y axis of the Marker.
 
-###callback (function) (optionnal)
+###callback (function) (optional)
 
 If you specify the callback parameter, it will be called at the end of the
 animation.
