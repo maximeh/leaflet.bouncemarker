@@ -38,7 +38,7 @@
       duration: 1000,
       height: -1
     },
-    bounceOnAddCallback: function() {},
+    bounceOnAddCallback: function() {}
   });
 
   L.Marker.include({
@@ -71,9 +71,9 @@
 
     _bounceMotion: function (delta, duration, callback) {
       var original = L.latLng(this._origLatlng),
-          start_y = this._dropPoint.y,
-          start_x = this._dropPoint.x,
-          distance = this._point.y - start_y;
+      start_y = this._dropPoint.y,
+      start_x = this._dropPoint.x,
+      distance = this._point.y - start_y;
       var self = this;
 
       this._motionStep({
@@ -83,11 +83,11 @@
         step: function (delta) {
           self._dropPoint.y =
             start_y
-            + (distance * delta)
-            - (self._map.project(self._map.getCenter()).y - self._origMapCenter.y);
+          + (distance * delta)
+          - (self._map.project(self._map.getCenter()).y - self._origMapCenter.y);
           self._dropPoint.x =
             start_x
-            - (self._map.project(self._map.getCenter()).x - self._origMapCenter.x);
+          - (self._map.project(self._map.getCenter()).x - self._origMapCenter.x);
           self.setLatLng(self._toLatLng(self._dropPoint));
         },
         end: function () {
@@ -113,14 +113,14 @@
     // Bounce : if options.height in pixels is not specified, drop from top.
     // If options.duration is not specified animation is 1s long.
     bounce: function(options, endCallback) {
-       this._origLatlng = this.getLatLng();
-       this._bounce(options, endCallback);
+      this._origLatlng = this.getLatLng();
+      this._bounce(options, endCallback);
     },
 
     _bounce: function (options, endCallback) {
       if (typeof options === "function") {
-          endCallback = options;
-          options = null;
+        endCallback = options;
+        options = null;
       }
       options = options || {duration: 1000, height: -1};
 
