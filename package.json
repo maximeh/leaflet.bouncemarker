@@ -1,0 +1,16 @@
+{
+  "name": "leaflet.BounceMarker",
+  "version": "1.0.0",
+  "description": "Make a marker bounce when you add it to a map.",
+  "main": "bouncemarker.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maximeh/leaflet.bouncemarker"
+  },
+  "author": "maximeh",
+  "bugs": {
+    "url": "https://github.com/maximeh/leaflet.bouncemarker/issues"
+  },
+  "homepage": "https://github.com/maximeh/leaflet.bouncemarker"
+}
