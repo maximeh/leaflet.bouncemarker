@@ -69,11 +69,11 @@
       }, opts.delay || 10);
     },
 
-    _bounceMotion: function (delta, duration, callback) {
-      var original = L.latLng(this._origLatlng),
-      start_y = this._dropPoint.y,
-      start_x = this._dropPoint.x,
-      distance = this._point.y - start_y;
+    _bounceMotion: function (duration, callback) {
+      var original = L.latLng(this._origLatlng);
+      var start_y = this._dropPoint.y;
+      var start_x = this._dropPoint.x;
+      var distance = this._point.y - start_y;
       var self = this;
 
       this._motionStep({
@@ -160,12 +160,12 @@
       // location then move to its drop location, and you may be able to see it.)
       if (this.options.bounceOnAdd === true) {
         // backward compatibility
-        if (typeof this.options.bounceOnAddDuration !== 'undefined') {
+        if (typeof this.options.bounceOnAddDuration !== "undefined") {
           this.options.bounceOnAddOptions.duration = this.options.bounceOnAddDuration;
         }
 
         // backward compatibility
-        if (typeof this.options.bounceOnAddHeight !== 'undefined') {
+        if (typeof this.options.bounceOnAddHeight !== "undefined") {
           this.options.bounceOnAddOptions.height = this.options.bounceOnAddHeight;
         }
 
