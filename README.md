@@ -11,7 +11,7 @@ Things may break in master, so please don't use this in production.
 There is [tags](https://github.com/maximeh/leaflet.bouncemarker/tags) which can
 be used in production.
 
-Last stable: [v1.0](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.0)
+Last stable: [v1.1](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.1)
 
 # Usage
 
