@@ -50,50 +50,54 @@
       return this._map.containerPointToLatLng(point);
     },
 
-    _motionStep: function (opts) {
+    _motionStep: function (timestamp, opts) {
       var self = this;
+      var timePassed = new Date() - opts.start;
+      var progress = timePassed / opts.duration;
 
-      var start = new Date();
-      self._intervalId = setInterval(function () {
-        var timePassed = new Date() - start;
-        var progress = timePassed / opts.duration;
-        if (progress > 1) {
-          progress = 1;
-        }
-        var delta = opts.delta(progress);
-        opts.step(delta);
-        if (progress === 1) {
-          opts.end();
-          clearInterval(self._intervalId);
-        }
-      }, opts.delay || 10);
+      if (progress > 1) {
+        progress = 1;
+      }
+      var delta = self._easeOutBounce(progress);
+      opts.step(delta);
+
+      if (progress === 1) {
+        opts.end();
+        return;
+      }
+
+      L.Util.requestAnimFrame(function(timestamp) {
+        self._motionStep(timestamp, opts);
+      });
     },
 
-    _bounceMotion: function (delta, duration, callback) {
-      var original = L.latLng(this._origLatlng),
-      start_y = this._dropPoint.y,
-      start_x = this._dropPoint.x,
-      distance = this._point.y - start_y;
+    _bounceMotion: function (duration, callback) {
+      var original = L.latLng(this._origLatlng);
+      var start_y = this._dropPoint.y;
+      var start_x = this._dropPoint.x;
+      var distance = this._point.y - start_y;
       var self = this;
 
-      this._motionStep({
-        delay: 10,
-        duration: duration || 1000, // 1 sec by default
-        delta: delta,
-        step: function (delta) {
-          self._dropPoint.y =
-            start_y
-          + (distance * delta)
-          - (self._map.project(self._map.getCenter()).y - self._origMapCenter.y);
-          self._dropPoint.x =
-            start_x
-          - (self._map.project(self._map.getCenter()).x - self._origMapCenter.x);
-          self.setLatLng(self._toLatLng(self._dropPoint));
-        },
-        end: function () {
-          self.setLatLng(original);
-          if (typeof callback === "function") callback();
-        }
+      L.Util.requestAnimFrame(function(timestamp) {
+        self._motionStep(timestamp, {
+          delay: 10,
+          duration: duration || 1000, // 1 sec by default
+          start: new Date(),
+          step: function (delta) {
+            self._dropPoint.y =
+              start_y
+            + (distance * delta)
+            - (self._map.project(self._map.getCenter()).y - self._origMapCenter.y);
+            self._dropPoint.x =
+              start_x
+            - (self._map.project(self._map.getCenter()).x - self._origMapCenter.x);
+            self.setLatLng(self._toLatLng(self._dropPoint));
+          },
+          end: function () {
+            self.setLatLng(original);
+            if (typeof callback === "function") callback();
+          }
+        });
       });
     },
 
@@ -133,7 +137,7 @@
       // Keep original map center
       this._origMapCenter = this._map.project(this._map.getCenter());
       this._dropPoint = this._getDropPoint(options.height);
-      this._bounceMotion(this._easeOutBounce, options.duration, endCallback);
+      this._bounceMotion(options.duration, endCallback);
     },
 
     // This will get you a drop point given a height.
@@ -160,12 +164,12 @@
       // location then move to its drop location, and you may be able to see it.)
       if (this.options.bounceOnAdd === true) {
         // backward compatibility
-        if (typeof this.options.bounceOnAddDuration !== 'undefined') {
+        if (typeof this.options.bounceOnAddDuration !== "undefined") {
           this.options.bounceOnAddOptions.duration = this.options.bounceOnAddDuration;
         }
 
         // backward compatibility
-        if (typeof this.options.bounceOnAddHeight !== 'undefined') {
+        if (typeof this.options.bounceOnAddHeight !== "undefined") {
           this.options.bounceOnAddOptions.height = this.options.bounceOnAddHeight;
         }
 
