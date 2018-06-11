@@ -66,7 +66,7 @@
         return;
       }
 
-      L.Util.requestAnimFrame(function(timestamp) {
+      self._animationId = L.Util.requestAnimFrame(function(timestamp) {
         self._motionStep(timestamp, opts);
       });
     },
@@ -186,7 +186,11 @@
     },
 
     onRemove: function (map) {
-      clearInterval(this._intervalId);
+      // We may have modified the marker; so we need to place it where it
+      // belongs so next time its coordinates are not changed.
+      this.setLatLng(this._origLatlng);
+      cancelAnimationFrame(this._animationId);
+
       originalOnRemove.call(this, map);
     }
   });
