@@ -117,12 +117,7 @@
 
     // Bounce : if options.height in pixels is not specified, drop from top.
     // If options.duration is not specified animation is 1s long.
-    bounce: function(options, endCallback) {
-      this._origLatlng = this.getLatLng();
-      this._bounce(options, endCallback);
-    },
-
-    _bounce: function (options, endCallback) {
+    bounce: function (options, endCallback) {
       if (typeof options === "function") {
         endCallback = options;
         options = null;
