@@ -46,6 +46,7 @@
     _toPoint: function (latlng) {
       return this._map.latLngToContainerPoint(latlng);
     },
+
     _toLatLng: function (point) {
       return this._map.containerPointToLatLng(point);
     },
