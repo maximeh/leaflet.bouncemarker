@@ -152,29 +152,12 @@
 
     onAdd: function (map) {
       this._map = map;
-      // Keep original latitude and longitude
-      this._origLatlng = this._latlng;
-
-      // We need to have our drop point BEFORE adding the marker to the map
-      // otherwise, it would create a flicker. (The marker would appear at final
-      // location then move to its drop location, and you may be able to see it.)
-      if (this.options.bounceOnAdd === true) {
-        // backward compatibility
-        if (typeof this.options.bounceOnAddDuration !== "undefined") {
-          this.options.bounceOnAddOptions.duration = this.options.bounceOnAddDuration;
-        }
-
-        // backward compatibility
-        if (typeof this.options.bounceOnAddHeight !== "undefined") {
-          this.options.bounceOnAddOptions.height = this.options.bounceOnAddHeight;
-        }
-
-        this._dropPoint = this._getDropPoint(this.options.bounceOnAddOptions.height);
-        this.setLatLng(this._toLatLng(this._dropPoint));
-      }
 
       // Call leaflet original method to add the Marker to the map.
       originalOnAdd.call(this, map);
+
+      // Keep original latitude and longitude
+      this._origLatlng = this.getLatLng();
 
       if (this.options.bounceOnAdd === true) {
         this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
