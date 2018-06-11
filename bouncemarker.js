@@ -182,7 +182,7 @@
       originalOnAdd.call(this, map);
 
       if (this.options.bounceOnAdd === true) {
-        this._bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
+        this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
       }
     },
 
