@@ -167,8 +167,7 @@
       // We may have modified the marker; so we need to place it where it
       // belongs so next time its coordinates are not changed.
       this.setLatLng(this._origLatlng);
-      cancelAnimationFrame(this._animationId);
-
+      L.Util.cancelAnimFrame(this._animationId);
       originalOnRemove.call(this, map);
     },
   });
