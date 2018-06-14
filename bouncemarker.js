@@ -58,6 +58,7 @@
       if (progress > 1) {
         progress = 1;
       }
+
       let delta = self._easeOutBounce(progress);
       opts.step(delta);
 
