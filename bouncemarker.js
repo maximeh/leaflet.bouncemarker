@@ -50,7 +50,7 @@
       return this._map.containerPointToLatLng(point);
     },
 
-    _motionStep: function(timestamp, opts) {
+    _motionStep: function(opts) {
       let self = this;
       let timePassed = new Date() - opts.start;
       let progress = timePassed / opts.duration;
@@ -67,7 +67,7 @@
       }
 
       self._animationId = L.Util.requestAnimFrame(function(timestamp) {
-        self._motionStep(timestamp, opts);
+        self._motionStep(opts);
       });
     },
 
@@ -78,9 +78,8 @@
       let distance = this._point.y - start_y;
       let self = this;
 
-      L.Util.requestAnimFrame(function(timestamp) {
-        self._motionStep(timestamp, {
-          delay: 10,
+      self._animationId = L.Util.requestAnimFrame(function() {
+        self._motionStep({
           duration: duration || 1000, // 1 sec by default
           start: new Date(),
           step: function(delta) {
