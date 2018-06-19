@@ -1,6 +1,6 @@
 {
   "name": "leaflet.BounceMarker",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Make a marker bounce when you add it to a map.",
   "main": "bouncemarker.js",
   "license": "MIT",
