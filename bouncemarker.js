@@ -36,6 +36,7 @@
     bounceOnAddOptions: {
       duration: 1000,
       height: -1,
+      loop: 1,
     },
     bounceOnAddCallback: function() {},
   });
@@ -63,8 +64,13 @@
       opts.step(delta);
 
       if (progress === 1) {
-        opts.end();
-        return;
+        opts.start = new Date();
+        progress = 0;
+        if (opts.loop > 0) opts.loop = opts.loop - 1;
+        if (opts.loop === 0) {
+          opts.end();
+          return;
+        }
       }
 
       self._animationId = L.Util.requestAnimFrame(function(timestamp) {
@@ -72,7 +78,7 @@
       });
     },
 
-    _bounceMotion: function(duration, callback) {
+    _bounceMotion: function(opts, callback) {
       let original = L.latLng(this._origLatlng);
       let start_y = this._dropPoint.y;
       let start_x = this._dropPoint.x;
@@ -81,7 +87,8 @@
 
       self._animationId = L.Util.requestAnimFrame(function() {
         self._motionStep({
-          duration: duration || 1000, // 1 sec by default
+          duration: opts.duration || 1000, // 1 sec by default
+          loop: opts.loop || 1,
           start: new Date(),
           step: function(delta) {
             self._dropPoint.y =
@@ -121,7 +128,7 @@
         endCallback = options;
         options = null;
       }
-      options = options || {duration: 1000, height: -1};
+      options = options || {duration: 1000, height: -1, loop: 1};
 
       // backward compatibility
       if (typeof options === 'number') {
@@ -132,7 +139,7 @@
       // Keep original map center
       this._origMapCenter = this._map.project(this._map.getCenter());
       this._dropPoint = this._getDropPoint(options.height);
-      this._bounceMotion(options.duration, endCallback);
+      this._bounceMotion(options, endCallback);
     },
 
     stopBounce: function(){

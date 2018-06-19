@@ -43,14 +43,19 @@ If true, your marker will bounce when added to the map. Default to false.
 
 ### bounceOnAddOptions (object) (optional)
 
-* bounceOnAddDuration (integer) (Default: 1000)
+* duration (integer) (Default: 1000)
 
     The duration of the animation in milliseconds.
 
-* bounceOnAddHeight (integer) (Default: top_y)
+* height (integer) (Default: top_y)
 
     The height (in pixel) at which the marker is "dropped".
     The default is the top point on the y axis of the Marker.
+
+* loop (integer) (Default: 1)
+
+    The number of times the animation should play.
+    -1 is a special value for infinite loop.
 
 ### bounceOnAddCallback (function) (optional)
 
@@ -62,7 +67,7 @@ animation.
 L.marker([48.85, 2.35],
   {
     bounceOnAdd: true,
-    bounceOnAddOptions: {duration: 500, height: 100},
+    bounceOnAddOptions: {duration: 500, height: 100, loop: 2},
     bounceOnAddCallback: function() {console.log("done");}
   }).addTo(map);
 ```
@@ -93,6 +98,11 @@ marker.on('click', function () {
 
     The height (in pixel) at which the marker is "dropped".
     The default is the top point on the y axis of the Marker.
+
+* loop (integer) (Default: 1)
+
+    The number of times the animation should play.
+    -1 is a special value for infinite loop.
 
 ### callback (function) (optional)
 
