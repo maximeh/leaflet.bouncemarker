@@ -178,10 +178,7 @@
     },
 
     onRemove: function(map) {
-      // We may have modified the marker; so we need to place it where it
-      // belongs so next time its coordinates are not changed.
-      this.setLatLng(this._origLatlng);
-      L.Util.cancelAnimFrame(this._animationId);
+      this.stopBounce();
       originalOnRemove.call(this, map);
     },
   });
