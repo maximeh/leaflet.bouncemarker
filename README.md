@@ -103,3 +103,8 @@ animation.
 ```javascript
 marker.bounce({duration: 500, height: 100}, function(){console.log("done")});
 ```
+
+## stopBounce
+
+Will stop the animation when called; the marker will be positionned at its
+destination.
