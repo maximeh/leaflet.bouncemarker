@@ -2,14 +2,14 @@
 <html>
 <head>
   <title>leaflet.bouncemarker demo</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
   <style>
     html, body, #map { margin: 0; height: 100%; }
   </style>
 </head>
 <body>
   <div id="map"></div>
-  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
   <script src="http://maximeh.github.io/leaflet.bouncemarker/bouncemarker.js"></script>
   <script>
       var map = L.map('map').setView([48.8, 2.35], 2);
@@ -17,7 +17,11 @@
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
 
-      new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+      marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 250, loop: 1}}).addTo(map);
+      marker.on('click', function () {
+	          marker.bounce();
+      });
+
   </script>
 </body>
 </html>
