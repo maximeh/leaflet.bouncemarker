@@ -17,7 +17,12 @@
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
 
-      marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true, bounceOnAddOptions: {duration: 500, height: 250, loop: 1}}).addTo(map);
+      marker = new L.Marker(
+            [48.85, 2.35],
+            {bounceOnAdd: true,
+             bounceOnAddOptions: {duration: 500, height: 250, loop: 2},
+             bounceOnAddCallback: function() {console.log("done");}
+            }).addTo(map);
       marker.on('click', function () {
 	          marker.bounce();
       });
