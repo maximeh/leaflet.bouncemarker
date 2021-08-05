@@ -1,9 +1,9 @@
 # Bouncemarker plugin for Leaflet
 
-This little plugin for [Leaflet](http://www.leafletjs.com) will make a Marker
+This little plugin for [Leaflet](https://www.leafletjs.com) will make a Marker
 bounce when you add it on a map on whenever you want it to.
 
-Watch the [demo](http://maximeh.github.com/leaflet.bouncemarker/).
+Watch the [demo](http://maximeh.github.io/leaflet.bouncemarker/).
 
 # Version
 
