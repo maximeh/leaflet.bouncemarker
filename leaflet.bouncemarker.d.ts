@@ -1,11 +1,10 @@
-import 'leaflet';
+import "leaflet";
 
-declare module 'leaflet' {
-
+declare module "leaflet" {
   export type BounceOptions = {
-    duration: number;
-    height: number;
-    loop: number;
+    duration?: number;
+    height?: number;
+    loop?: number;
   };
 
   export interface MarkerOptions {
@@ -19,5 +18,4 @@ declare module 'leaflet' {
     bounce(options: BounceOptions, callback?: () => void): void;
     stopBounce(): void;
   }
-
 }
