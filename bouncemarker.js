@@ -136,7 +136,8 @@
         options.height = arguments[1];
       }
 
-      // Keep original map center
+      // Keep original latitude, longitude and map center
+      this._origLatlng = this.getLatLng();
       this._origMapCenter = this._map.project(this._map.getCenter());
       this._dropPoint = this._getDropPoint(options.height);
       this._bounceMotion(options, endCallback);
@@ -168,9 +169,6 @@
 
       // Call leaflet original method to add the Marker to the map.
       originalOnAdd.call(this, map);
-
-      // Keep original latitude and longitude
-      this._origLatlng = this.getLatLng();
 
       if (this.options.bounceOnAdd === true) {
         this.bounce(this.options.bounceOnAddOptions, this.options.bounceOnAddCallback);
