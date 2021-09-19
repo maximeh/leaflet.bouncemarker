@@ -3,6 +3,7 @@
   "version": "1.2.1",
   "description": "Make a marker bounce when you add it to a map.",
   "main": "bouncemarker.js",
+  "types": "leaflet.bouncemarker.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",

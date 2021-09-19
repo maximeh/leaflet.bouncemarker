@@ -1,19 +1,21 @@
-import * as L from 'leaflet';
+import "leaflet";
 
-declare module 'leaflet' {
+declare module "leaflet" {
+  export type BounceOptions = {
+    duration?: number;
+    height?: number;
+    loop?: number;
+  };
 
-  export interface MarkerOptions extends InteractiveLayerOptions {
-
+  export interface MarkerOptions {
     bounceOnAdd?: boolean;
-
-    bounceOnAddOptions?: {
-        duration: number,
-        height: number,
-        loop: number,
-    };
-
-    bounceOnAddCallback?: Function;
-
+    bounceOnAddOptions?: BounceOptions;
+    bounceOnAddCallback?: () => void;
   }
 
+  export interface Marker {
+    bounce(callback?: () => void): void;
+    bounce(options: BounceOptions, callback?: () => void): void;
+    stopBounce(): void;
+  }
 }
