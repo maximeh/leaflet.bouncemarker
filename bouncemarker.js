@@ -146,7 +146,9 @@
     stopBounce: function(){
       // We may have modified the marker; so we need to place it where it
       // belongs so next time its coordinates are not changed.
-      this.setLatLng(this._origLatlng);
+      if (typeof this._origLatlng !== "undefined") {
+        this.setLatLng(this._origLatlng);
+      }
       L.Util.cancelAnimFrame(this._animationId);
     },
 
