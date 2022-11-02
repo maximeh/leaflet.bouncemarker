@@ -15,7 +15,12 @@
   },
   "homepage": "https://github.com/maximeh/leaflet.bouncemarker",
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-google": "^0.9.1"
-  }
+    "eslint": "^8.26.0",
+    "eslint-config-google": "^0.14.0",
+    "jsdoc": "^3.6.11",
+    "jsdoc-to-markdown": "^7.1.1"
+  },
+  "scripts": {
+    "docs": "jsdoc2md ./bouncemarker.js > docs/api.md && cat docs/header.md docs/api.md > README.md"
+	}
 }
