@@ -10,7 +10,7 @@ Watch the [demo](http://maximeh.github.io/leaflet.bouncemarker/).
 Things may break in master, so please don't use this in production.
 [Tags](https://github.com/maximeh/leaflet.bouncemarker/tags) should be preferred for used in production.
 
-Last stable: [v1.2.3](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.2.3)
+Last stable: [v1.2.4](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.2.4)
 
 # Documentation
 
@@ -47,14 +47,14 @@ Last stable: [v1.2.3](https://github.com/maximeh/leaflet.bouncemarker/releases/t
 ## bounce(options, endCallback)
 Make a marker bounce at anytime you wish.
 
-**Kind**: global function  
+**Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | [<code>bounceOnAddOptions</code>](#bounceOnAddOptions) | user defined options |
 | endCallback | [<code>bounceOnAddCallback</code>](#bounceOnAddCallback) | run at end of animation |
 
-**Example**  
+**Example**
 ```js
 marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
 marker.on('click', function () {
@@ -66,19 +66,19 @@ marker.on('click', function () {
 ## stopBounce() ⇒ <code>void</code>
 Stop the animation and place the marker at its destination.
 
-**Kind**: global function  
+**Kind**: global function
 <a name="onAdd"></a>
 
 ## onAdd(map)
 Add a Marker to {map} and optionaly make it bounce.
 
-**Kind**: global function  
+**Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
 | map | <code>L.Map</code> | Leaflet map to add the marker to |
 
-**Example**  
+**Example**
 ```js
 L.marker([48.85, 2.35],
   {
@@ -90,7 +90,7 @@ L.marker([48.85, 2.35],
 ## onRemove(map)
 Stop any animation running and remove the Marker from {map}.
 
-**Kind**: global function  
+**Kind**: global function
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -101,7 +101,7 @@ Stop any animation running and remove the Marker from {map}.
 ## bounceOnAddOptions : <code>Object</code>
 User defined options
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Default | Description |
@@ -115,4 +115,4 @@ User defined options
 ## bounceOnAddCallback ⇒ <code>void</code>
 Callback run at the end of the whole animation.
 
-**Kind**: global typedef  
+**Kind**: global typedef

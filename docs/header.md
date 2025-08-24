@@ -10,7 +10,7 @@ Watch the [demo](http://maximeh.github.io/leaflet.bouncemarker/).
 Things may break in master, so please don't use this in production.
 [Tags](https://github.com/maximeh/leaflet.bouncemarker/tags) should be preferred for used in production.
 
-Last stable: [v1.2.3](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.2.3)
+Last stable: [v1.2.4](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.2.4)
 
 # Documentation
 
