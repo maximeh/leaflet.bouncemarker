@@ -18,9 +18,10 @@
     "eslint": "^8.26.0",
     "eslint-config-google": "^0.14.0",
     "jsdoc": "^3.6.11",
-    "jsdoc-to-markdown": "^7.1.1"
+    "jsdoc-to-markdown": "^7.1.1",
+    "prettier": "^3.6.2"
   },
   "scripts": {
     "docs": "jsdoc2md ./bouncemarker.js > docs/api.md && cat docs/header.md docs/api.md > README.md"
-	}
+  }
 }

@@ -5,12 +5,16 @@ bounce when you add it on a map on whenever you want it to.
 
 Watch the [demo](http://maximeh.github.io/leaflet.bouncemarker/).
 
+## Compatibility
+
+This plugin is compatible with:
+- Leaflet 1.x (use the global `L` object)
+- Leaflet 2.x (use ESM imports or the global script)
+
 # Version
 
 Things may break in master, so please don't use this in production.
 [Tags](https://github.com/maximeh/leaflet.bouncemarker/tags) should be preferred for used in production.
-
-Last stable: [v1.2.4](https://github.com/maximeh/leaflet.bouncemarker/releases/tag/v1.2.4)
 
 # Documentation
 
@@ -56,7 +60,15 @@ Make a marker bounce at anytime you wish.
 
 **Example**
 ```js
-marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+// Leaflet 2.x with ESM
+import { Marker } from 'leaflet';
+const marker = new Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+marker.on('click', function () {
+    marker.bounce({duration: 500, height: 100});
+});
+
+// Leaflet 2.x with global script or Leaflet 1.x
+const marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
 marker.on('click', function () {
     marker.bounce({duration: 500, height: 100});
 });
@@ -80,7 +92,15 @@ Add a Marker to {map} and optionaly make it bounce.
 
 **Example**
 ```js
-L.marker([48.85, 2.35],
+// Leaflet 2.x with ESM
+import { Marker } from 'leaflet';
+new Marker([48.85, 2.35],
+  {
+    bounceOnAdd: true,
+  }).addTo(map);
+
+// Leaflet 2.x with global script or Leaflet 1.x
+new L.Marker([48.85, 2.35],
   {
     bounceOnAdd: true,
   }).addTo(map);
@@ -116,3 +136,45 @@ User defined options
 Callback run at the end of the whole animation.
 
 **Kind**: global typedef
+
+# Usage
+
+## Leaflet 2.x with ESM modules
+
+```html
+<script type="importmap">
+    {
+        "imports": {
+            "leaflet": "https://unpkg.com/leaflet@2.0.0/dist/leaflet.js"
+        }
+    }
+</script>
+<script type="module">
+    import { Map, TileLayer, Marker } from 'leaflet';
+    import 'path/to/bouncemarker.js';
+
+    const map = new Map('map').setView([48.85, 2.35], 13);
+    const marker = new Marker([48.85, 2.35], {
+        bounceOnAdd: true,
+        bounceOnAddOptions: {duration: 500, height: 100}
+    }).addTo(map);
+</script>
+```
+
+## Leaflet 2.x with global script or Leaflet 1.x
+
+```html
+<!-- For Leaflet 2.x -->
+<script src="https://unpkg.com/leaflet@2.0.0/dist/leaflet-global.js"></script>
+<!-- For Leaflet 1.x -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="path/to/bouncemarker.js"></script>
+<script>
+    const map = new L.Map('map').setView([48.85, 2.35], 13);
+    const marker = new L.Marker([48.85, 2.35], {
+        bounceOnAdd: true,
+        bounceOnAddOptions: {duration: 500, height: 100}
+    }).addTo(map);
+</script>
+```
