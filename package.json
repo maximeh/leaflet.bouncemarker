@@ -1,6 +1,6 @@
 {
   "name": "leaflet.bouncemarker",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Make a marker bounce when you add it to a map.",
   "main": "bouncemarker.js",
   "types": "leaflet.bouncemarker.d.ts",
@@ -19,9 +19,11 @@
     "eslint-config-google": "^0.14.0",
     "jsdoc": "^3.6.11",
     "jsdoc-to-markdown": "^7.1.1",
+    "playwright": "^1.40.0",
     "prettier": "^3.6.2"
   },
   "scripts": {
+    "test": "node test/run.js",
     "docs": "jsdoc2md ./bouncemarker.js > docs/api.md && cat docs/header.md docs/api.md > README.md"
   }
 }

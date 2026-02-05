@@ -1,0 +1,336 @@
+<!doctype html>
+<html>
+<head>
+  <title>Leaflet BounceMarker Integration Tests</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.css" crossorigin=""/>
+  <style>
+    body { margin: 0; font-family: monospace; }
+    #map { height: 400px; width: 100%; }
+    #results { padding: 20px; }
+    .test { margin: 10px 0; }
+    .test.pass { color: green; }
+    .test.fail { color: red; }
+    .summary { margin-top: 20px; font-weight: bold; font-size: 16px; }
+    .summary.pass { color: green; }
+    .summary.fail { color: red; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="results">
+    <h2>Test Results</h2>
+    <div id="test-output"></div>
+    <div id="summary"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet-global.js" crossorigin=""></script>
+  <script src="../bouncemarker.js"></script>
+  <script>
+    // Test framework
+    const tests = [];
+    const results = [];
+
+    function test(name, fn) {
+      tests.push({ name, fn });
+    }
+
+    function assert(condition, message) {
+      if (!condition) {
+        throw new Error(message || 'Assertion failed');
+      }
+    }
+
+    function assertEquals(actual, expected, message) {
+      if (actual !== expected) {
+        throw new Error(message || `Expected ${expected}, got ${actual}`);
+      }
+    }
+
+    function assertClose(actual, expected, tolerance, message) {
+      if (Math.abs(actual - expected) > tolerance) {
+        throw new Error(message || `Expected ${expected} ± ${tolerance}, got ${actual}`);
+      }
+    }
+
+    async function runTests() {
+      const output = document.getElementById('test-output');
+      const summary = document.getElementById('summary');
+
+      let passed = 0;
+      let failed = 0;
+
+      for (const { name, fn } of tests) {
+        const testDiv = document.createElement('div');
+        testDiv.className = 'test';
+
+        try {
+          await fn();
+          testDiv.className += ' pass';
+          testDiv.textContent = `✓ ${name}`;
+          passed++;
+          results.push({ name, status: 'pass' });
+        } catch (error) {
+          testDiv.className += ' fail';
+          testDiv.textContent = `✗ ${name}: ${error.message}`;
+          failed++;
+          results.push({ name, status: 'fail', error: error.message });
+        }
+
+        output.appendChild(testDiv);
+      }
+
+      // Add summary
+      const total = passed + failed;
+      summary.className = 'summary ' + (failed === 0 ? 'pass' : 'fail');
+      summary.textContent = `${passed}/${total} tests passed`;
+
+      // Expose results for Playwright
+      window.testResults = {
+        total,
+        passed,
+        failed,
+        results
+      };
+    }
+
+    // Initialize map
+    const map = new L.Map('map').setView([48.8566, 2.3522], 6);
+    new L.TileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // ========================================
+    // TESTS
+    // ========================================
+
+    test('Marker has bounce method', () => {
+      const marker = new L.Marker([48.8566, 2.3522]);
+      assert(typeof marker.bounce === 'function', 'Marker should have bounce method');
+    });
+
+    test('Marker has stopBounce method', () => {
+      const marker = new L.Marker([48.8566, 2.3522]);
+      assert(typeof marker.stopBounce === 'function', 'Marker should have stopBounce method');
+    });
+
+    test('Marker can be created with bounceOnAdd option', () => {
+      const marker = new L.Marker([48.8566, 2.3522], {
+        bounceOnAdd: true
+      });
+      assertEquals(marker.options.bounceOnAdd, true);
+    });
+
+    test('Marker bounces when added with bounceOnAdd', async () => {
+      const marker = new L.Marker([48.8566, 2.3522], {
+        bounceOnAdd: true,
+        bounceOnAddOptions: {
+          duration: 100,
+          height: 50
+        }
+      }).addTo(map);
+
+      // Wait a bit for wrapping to occur
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // Check that icon has bounce animation class
+      const iconElement = marker._iconElement || marker._icon.querySelector('.leaflet-marker-icon');
+      assert(iconElement.classList.contains('leaflet-marker-bouncing'), 'Icon should have bouncing class');
+
+      map.removeLayer(marker);
+    });
+
+    test('Marker creates wrapper container during bounce', async () => {
+      const marker = new L.Marker([48.8566, 2.3522]).addTo(map);
+
+      marker.bounce({ duration: 100, height: 50 });
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      assert(marker._bounceContainer, 'Should have bounce container');
+      assert(marker._icon === marker._bounceContainer, '_icon should point to wrapper');
+      assert(marker._bounceContainer.classList.contains('leaflet-marker-bounce-container'), 'Container should have correct class');
+
+      map.removeLayer(marker);
+    });
+
+    test('Marker maintains position during pan', async () => {
+      const latlng = [48.8566, 2.3522];
+      const marker = new L.Marker(latlng, {
+        bounceOnAdd: true,
+        bounceOnAddOptions: {
+          duration: 500,
+          height: 100
+        }
+      }).addTo(map);
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Pan the map
+      map.panTo([50.0, 3.0]);
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Check position is correct
+      const expectedPos = map.latLngToLayerPoint(latlng);
+      const transform = window.getComputedStyle(marker._icon).transform;
+      const matrix = transform.match(/matrix\(([^)]+)\)/);
+      assert(matrix, 'Should have transform matrix');
+
+      const values = matrix[1].split(', ');
+      const actualX = parseFloat(values[4]);
+      const actualY = parseFloat(values[5]);
+
+      assertClose(actualX, expectedPos.x, 2, 'X position should be correct after pan');
+      assertClose(actualY, expectedPos.y, 2, 'Y position should be correct after pan');
+
+      map.removeLayer(marker);
+    });
+
+    test('Marker maintains position during zoom', async () => {
+      const latlng = [48.8566, 2.3522];
+      const marker = new L.Marker(latlng, {
+        bounceOnAdd: true,
+        bounceOnAddOptions: {
+          duration: 1000,
+          height: 100
+        }
+      }).addTo(map);
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Zoom in
+      map.setZoom(8);
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Check position is correct
+      const expectedPos = map.latLngToLayerPoint(latlng);
+      const transform = window.getComputedStyle(marker._icon).transform;
+      const matrix = transform.match(/matrix\(([^)]+)\)/);
+      assert(matrix, 'Should have transform matrix');
+
+      const values = matrix[1].split(', ');
+      const actualX = parseFloat(values[4]);
+      const actualY = parseFloat(values[5]);
+
+      assertClose(actualX, expectedPos.x, 2, 'X position should be correct after zoom');
+      assertClose(actualY, expectedPos.y, 2, 'Y position should be correct after zoom');
+
+      map.removeLayer(marker);
+    });
+
+    test('Shadow animates during bounce', async () => {
+      const marker = new L.Marker([48.8566, 2.3522], {
+        bounceOnAdd: true,
+        bounceOnAddOptions: {
+          duration: 500,
+          height: 100
+        }
+      }).addTo(map);
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Check shadow wrapper exists and has animation class
+      if (marker._shadow) {
+        assert(marker._shadowSlideContainer, 'Should have shadow slide container');
+        assert(marker._shadowScaleContainer, 'Should have shadow scale container');
+        assert(
+          marker._shadowSlideContainer.classList.contains('leaflet-marker-shadow-slide-bouncing'),
+          'Shadow should have slide animation class'
+        );
+        assert(
+          marker._shadowScaleContainer.classList.contains('leaflet-marker-shadow-scale-bouncing'),
+          'Shadow should have scale animation class'
+        );
+      }
+
+      map.removeLayer(marker);
+    });
+
+    test('stopBounce removes animation classes', async () => {
+      const marker = new L.Marker([48.8566, 2.3522]).addTo(map);
+
+      marker.bounce({ duration: 1000, height: 100 });
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const iconElement = marker._iconElement || marker._icon.querySelector('.leaflet-marker-icon');
+      assert(iconElement.classList.contains('leaflet-marker-bouncing'), 'Should have bouncing class');
+
+      marker.stopBounce();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      assert(!iconElement.classList.contains('leaflet-marker-bouncing'), 'Should not have bouncing class after stop');
+
+      map.removeLayer(marker);
+    });
+
+    test('Bounce callback is called', async () => {
+      return new Promise((resolve, reject) => {
+        const marker = new L.Marker([48.8566, 2.3522]).addTo(map);
+
+        let callbackCalled = false;
+        marker.bounce({
+          duration: 100,
+          height: 50
+        }, () => {
+          callbackCalled = true;
+        });
+
+        setTimeout(() => {
+          try {
+            assert(callbackCalled, 'Callback should have been called');
+            map.removeLayer(marker);
+            resolve();
+          } catch (error) {
+            map.removeLayer(marker);
+            reject(error);
+          }
+        }, 200);
+      });
+    });
+
+    test('Multiple markers can bounce simultaneously', async () => {
+      const markers = [
+        new L.Marker([48.8566, 2.3522], { bounceOnAdd: true, bounceOnAddOptions: { duration: 200 } }).addTo(map),
+        new L.Marker([49.0, 2.5], { bounceOnAdd: true, bounceOnAddOptions: { duration: 200 } }).addTo(map),
+        new L.Marker([48.7, 2.2], { bounceOnAdd: true, bounceOnAddOptions: { duration: 200 } }).addTo(map)
+      ];
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // All should be bouncing
+      markers.forEach(marker => {
+        const iconElement = marker._iconElement || marker._icon.querySelector('.leaflet-marker-icon');
+        assert(iconElement.classList.contains('leaflet-marker-bouncing'), 'Marker should be bouncing');
+      });
+
+      markers.forEach(marker => map.removeLayer(marker));
+    });
+
+    test('Marker can bounce multiple times (e.g., click after bounceOnAdd)', async () => {
+      const marker = new L.Marker([48.8566, 2.3522], {
+        bounceOnAdd: true,
+        bounceOnAddOptions: { duration: 100, height: 50 }
+      }).addTo(map);
+
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      marker.bounce({ duration: 100, height: 50 });
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const iconElement = marker._iconElement || marker._icon.querySelector('.leaflet-marker-icon');
+      assert(iconElement, 'Should have icon element reference');
+      assert(iconElement.classList.contains('leaflet-marker-bouncing'), 'Icon should be bouncing on second bounce');
+
+      if (marker._shadow) {
+        assert(marker._shadowSlideContainer.classList.contains('leaflet-marker-shadow-slide-bouncing'), 'Shadow should be bouncing on second bounce');
+      }
+
+      map.removeLayer(marker);
+    });
+
+    // Run tests when page loads
+    window.addEventListener('load', () => {
+      // Wait for map to be ready
+      setTimeout(runTests, 500);
+    });
+  </script>
+</body>
+</html>
