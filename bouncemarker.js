@@ -33,7 +33,6 @@
    * @return {void}
    */
   function initBounceMarker() {
-    // Check if Leaflet is available on window
     if (!window.L) {
       setTimeout(initBounceMarker, 100);
       return;
@@ -41,7 +40,6 @@
 
     const L = window.L;
 
-    // Get the classes we need
     const Marker = L.Marker;
     const LatLng = L.LatLng;
     const Point = L.Point;
@@ -54,9 +52,129 @@
       return;
     }
 
-    // Retain the value of the original onAdd and onRemove functions
+    injectBounceStyles();
+
     const originalOnAdd = Marker.prototype.onAdd;
     const originalOnRemove = Marker.prototype.onRemove;
+
+  /**
+   * Inject CSS styles for bounce animations into document head.
+   * Only injects once even if called multiple times.
+   * @private
+   * @return {void}
+   */
+  function injectBounceStyles() {
+    if (document.getElementById('leaflet-bouncemarker-styles')) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = 'leaflet-bouncemarker-styles';
+    style.textContent = `
+/* Bounce animation keyframes */
+@keyframes leaflet-marker-bounce {
+  0.00% { transform: translate3d(0, calc(var(--bounce-height) * -1.0000), 0); }
+  10.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.9244), 0); }
+  20.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.6975), 0); }
+  30.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.3194), 0); }
+  36.36% { transform: translate3d(0, calc(var(--bounce-height) * -0.0002), 0); }
+  40.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.0900), 0); }
+  50.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.2344), 0); }
+  60.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.2275), 0); }
+  70.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.0694), 0); }
+  72.72% { transform: translate3d(0, calc(var(--bounce-height) * -0.0002), 0); }
+  80.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.0600), 0); }
+  85.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.0548), 0); }
+  90.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.0119), 0); }
+  90.90% { transform: translate3d(0, calc(var(--bounce-height) * -0.0001), 0); }
+  95.00% { transform: translate3d(0, calc(var(--bounce-height) * -0.0155), 0); }
+  100.00% { transform: translate3d(0, 0, 0); }
+}
+
+/* Shadow animation keyframes - scale/opacity follows bounce curve */
+@keyframes leaflet-marker-shadow-scale {
+  0.00% { transform: scale(0.30); opacity: 0.20; }
+  10.00% { transform: scale(0.35); opacity: 0.25; }
+  20.00% { transform: scale(0.51); opacity: 0.41; }
+  30.00% { transform: scale(0.78); opacity: 0.68; }
+  36.36% { transform: scale(1.00); opacity: 0.90; }
+  40.00% { transform: scale(0.94); opacity: 0.84; }
+  50.00% { transform: scale(0.84); opacity: 0.74; }
+  60.00% { transform: scale(0.84); opacity: 0.74; }
+  70.00% { transform: scale(0.95); opacity: 0.85; }
+  72.72% { transform: scale(1.00); opacity: 0.90; }
+  80.00% { transform: scale(0.96); opacity: 0.86; }
+  85.00% { transform: scale(0.96); opacity: 0.86; }
+  90.00% { transform: scale(0.99); opacity: 0.89; }
+  90.90% { transform: scale(1.00); opacity: 0.90; }
+  95.00% { transform: scale(0.99); opacity: 0.89; }
+  100.00% { transform: scale(1.00); opacity: 0.90; }
+}
+
+/* Shadow slide animation - follows marker height curve (not linear!) */
+@keyframes leaflet-marker-shadow-slide {
+  0.00% { transform: translate(calc(var(--bounce-height) * 1.0000 * 0.48), calc(var(--bounce-height) * 1.0000 * -1.64)); }
+  10.00% { transform: translate(calc(var(--bounce-height) * 0.9244 * 0.48), calc(var(--bounce-height) * 0.9244 * -1.64)); }
+  20.00% { transform: translate(calc(var(--bounce-height) * 0.6975 * 0.48), calc(var(--bounce-height) * 0.6975 * -1.64)); }
+  30.00% { transform: translate(calc(var(--bounce-height) * 0.3194 * 0.48), calc(var(--bounce-height) * 0.3194 * -1.64)); }
+  36.36% { transform: translate(calc(var(--bounce-height) * 0.0002 * 0.48), calc(var(--bounce-height) * 0.0002 * -1.64)); }
+  40.00% { transform: translate(calc(var(--bounce-height) * 0.0900 * 0.48), calc(var(--bounce-height) * 0.0900 * -1.64)); }
+  50.00% { transform: translate(calc(var(--bounce-height) * 0.2344 * 0.48), calc(var(--bounce-height) * 0.2344 * -1.64)); }
+  60.00% { transform: translate(calc(var(--bounce-height) * 0.2275 * 0.48), calc(var(--bounce-height) * 0.2275 * -1.64)); }
+  70.00% { transform: translate(calc(var(--bounce-height) * 0.0694 * 0.48), calc(var(--bounce-height) * 0.0694 * -1.64)); }
+  72.72% { transform: translate(calc(var(--bounce-height) * 0.0002 * 0.48), calc(var(--bounce-height) * 0.0002 * -1.64)); }
+  80.00% { transform: translate(calc(var(--bounce-height) * 0.0600 * 0.48), calc(var(--bounce-height) * 0.0600 * -1.64)); }
+  85.00% { transform: translate(calc(var(--bounce-height) * 0.0548 * 0.48), calc(var(--bounce-height) * 0.0548 * -1.64)); }
+  90.00% { transform: translate(calc(var(--bounce-height) * 0.0119 * 0.48), calc(var(--bounce-height) * 0.0119 * -1.64)); }
+  90.90% { transform: translate(calc(var(--bounce-height) * 0.0001 * 0.48), calc(var(--bounce-height) * 0.0001 * -1.64)); }
+  95.00% { transform: translate(calc(var(--bounce-height) * 0.0155 * 0.48), calc(var(--bounce-height) * 0.0155 * -1.64)); }
+  100.00% { transform: translate(calc(var(--bounce-height) * 0.0000 * 0.48), calc(var(--bounce-height) * 0.0000 * -1.64)); }
+}
+
+/* Bounce container wrapping icon and shadow */
+.leaflet-marker-bounce-container {
+  position: absolute;
+}
+
+.leaflet-marker-shadow-position-container {
+  position: absolute;
+}
+
+.leaflet-marker-shadow-scale-container {
+  position: absolute;
+}
+
+.leaflet-marker-shadow-slide-container {
+  position: absolute;
+}
+
+/* Scale/opacity animation on shadow middle wrapper */
+.leaflet-marker-shadow-scale-container.leaflet-marker-shadow-scale-bouncing {
+  transform-origin: top right;
+  animation: leaflet-marker-shadow-scale var(--bounce-duration) linear;
+  animation-delay: var(--bounce-delay, 0ms);
+  animation-iteration-count: var(--bounce-loops, 1);
+  animation-fill-mode: both;
+}
+
+/* Slide animation on shadow inner wrapper - follows marker height */
+.leaflet-marker-shadow-slide-container.leaflet-marker-shadow-slide-bouncing {
+  animation: leaflet-marker-shadow-slide var(--bounce-duration) linear;
+  animation-delay: var(--bounce-delay, 0ms);
+  animation-iteration-count: var(--bounce-loops, 1);
+  animation-fill-mode: both;
+}
+
+/* Bouncing marker icon */
+.leaflet-marker-icon.leaflet-marker-bouncing {
+  animation: leaflet-marker-bounce var(--bounce-duration) ease-out;
+  animation-delay: var(--bounce-delay, 0ms);
+  animation-iteration-count: var(--bounce-loops, 1);
+  animation-fill-mode: both;
+}
+`;
+    document.head.appendChild(style);
+  }
 
     /**
      * @namespace Marker
@@ -92,136 +210,183 @@
     // Extend Marker prototype
     Object.assign(Marker.prototype, {
       /**
-       * Helper to `latLngToContainerPoint` conversion method.
-       * @private
-       * @see {@link https://leafletjs.com/reference.html#map-latlngtocontainerpoint|Ref}
-       * @param {LatLng} latlng - geographical coordinate
-       * @return {Point} the corresponding pixel coordinate relative to the map
-       * container.
-       */
-      _toPoint: function(latlng) {
-        return this._map.latLngToContainerPoint(latlng);
-      },
-
-      /**
-       * Helper to `containerPointToLatLng` conversion method.
-       * @private
-       * @see {@link https://leafletjs.com/reference.html#map-containerPointToLatLng|Ref}
-       * @param {Point} point - pixel coordinate relative to the map container
-       * @return {LatLng} the corresponding geographical coordinate (for the
-       * current zoom level).
-       */
-      _toLatLng: function(point) {
-        return this._map.containerPointToLatLng(point);
-      },
-
-      /**
-       * Compute and update the marker's coordinate at every frame.
-       * @private
-       * @param {bounceOnAddOptions} opts - user defined options
-       */
-      _motionStep: function(opts) {
-        const self = this;
-        const timePassed = new Date() - opts.start;
-        let progress = timePassed / opts.duration;
-
-        if (progress > 1) {
-          progress = 1;
-        }
-
-        const delta = self._easeOutBounce(progress);
-        opts.step(delta);
-
-        if (progress === 1) {
-          opts.start = new Date();
-          progress = 0;
-          if (opts.loop > 0) opts.loop = opts.loop - 1;
-          if (opts.loop === 0) {
-            opts.end();
-            return;
-          }
-        }
-
-        self._animationId = requestAnimationFrame(function(timestamp) {
-          self._motionStep(opts);
-        });
-      },
-
-      /**
-       * Wrapper around _motionStep; takes care of computing coordinates and
-       * calling callback at the end.
-       * @see {@link _motionStep}
+       * Start CSS-based bounce animation.
        * @private
        * @param {bounceOnAddOptions} opts - user defined options
        * @param {?bounceOnAddCallback} callback - user defined callback
        */
-      _bounceMotion: function(opts, callback) {
-        const original = new LatLng(this._origLatlng.lat, this._origLatlng.lng);
-        const startY = this._dropPoint.y;
-        const startX = this._dropPoint.x;
-        const distance = this._point.y - startY;
-        const self = this;
-        const map = self._map;
+      _startCSSBounce: function(opts, callback) {
+        const icon = this._icon;
+        if (!icon) return;
 
-        self._animationId = requestAnimationFrame(function() {
-          self._motionStep({
-            duration: opts.duration || 1000, // 1 sec by default
-            loop: opts.loop || 1,
-            start: new Date(),
-            step: function(delta) {
-              self._dropPoint.y =
-                startY +
-                distance * delta -
-                (map.project(map.getCenter()).y - self._origMapCenter.y);
-              self._dropPoint.x =
-                startX -
-                (map.project(map.getCenter()).x - self._origMapCenter.x);
-              self.setLatLng(self._toLatLng(self._dropPoint));
-            },
-            end: function() {
-              self.setLatLng(original);
-              if (typeof callback === 'function') callback();
-            },
-          });
-        });
+        const height = this._getDropHeight(opts.height);
+
+        icon.style.setProperty('--bounce-height', height + 'px');
+        icon.style.setProperty('--bounce-duration', (opts.duration || 1000) + 'ms');
+        icon.style.setProperty('--bounce-delay', (opts.delay || 0) + 'ms');
+        icon.style.setProperty('--bounce-loops', opts.loop || 1);
+
+        if (!icon.classList || !icon.classList.contains('leaflet-marker-bounce-container')) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'leaflet-marker-bounce-container';
+          wrapper.style.position = 'absolute';
+          wrapper.style.transform = icon.style.transform;
+          wrapper.style.zIndex = icon.style.zIndex;
+
+          icon.parentNode.replaceChild(wrapper, icon);
+          wrapper.appendChild(icon);
+
+          icon.style.transform = '';
+
+          this._iconElement = icon;
+          this._icon = wrapper;
+          this._bounceContainer = wrapper;
+        } else {
+          this._iconElement = icon.querySelector('.leaflet-marker-icon');
+        }
+
+        if (this._shadow) {
+          const actualShadow = this._shadowElement || this._shadow;
+
+          let shadowContainer = actualShadow.parentNode;
+
+          if (!shadowContainer.classList || !shadowContainer.classList.contains('leaflet-marker-shadow-scale-container')) {
+            const scaleWrapper = document.createElement('div');
+            scaleWrapper.className = 'leaflet-marker-shadow-scale-container';
+            scaleWrapper.style.position = 'absolute';
+            scaleWrapper.style.transformOrigin = 'top right';
+
+            actualShadow.parentNode.replaceChild(scaleWrapper, actualShadow);
+            scaleWrapper.appendChild(actualShadow);
+
+            shadowContainer = scaleWrapper;
+            this._shadowScaleContainer = scaleWrapper;
+          } else {
+            this._shadowScaleContainer = shadowContainer;
+          }
+
+          let slideContainer = shadowContainer.parentNode;
+          if (!slideContainer.classList || !slideContainer.classList.contains('leaflet-marker-shadow-slide-container')) {
+            const slideWrapper = document.createElement('div');
+            slideWrapper.className = 'leaflet-marker-shadow-slide-container';
+            slideWrapper.style.position = 'absolute';
+
+            shadowContainer.parentNode.replaceChild(slideWrapper, shadowContainer);
+            slideWrapper.appendChild(shadowContainer);
+
+            slideContainer = slideWrapper;
+            this._shadowSlideContainer = slideWrapper;
+          } else {
+            this._shadowSlideContainer = slideContainer;
+          }
+
+          let positionContainer = slideContainer.parentNode;
+          if (!positionContainer.classList || !positionContainer.classList.contains('leaflet-marker-shadow-position-container')) {
+            const posWrapper = document.createElement('div');
+            posWrapper.className = 'leaflet-marker-shadow-position-container';
+            posWrapper.style.position = 'absolute';
+            posWrapper.style.transform = actualShadow.style.transform;
+
+            slideContainer.parentNode.replaceChild(posWrapper, slideContainer);
+            posWrapper.appendChild(slideContainer);
+
+            actualShadow.style.transform = '';
+
+            this._shadowPositionContainer = posWrapper;
+          } else {
+            this._shadowPositionContainer = positionContainer;
+          }
+
+          this._shadowElement = actualShadow;
+          this._shadow = this._shadowPositionContainer;
+
+          const duration = (opts.duration || 1000) + 'ms';
+          const delay = (opts.delay || 0) + 'ms';
+          const loops = opts.loop || 1;
+
+          this._shadowSlideContainer.style.setProperty('--bounce-duration', duration);
+          this._shadowSlideContainer.style.setProperty('--bounce-delay', delay);
+          this._shadowSlideContainer.style.setProperty('--bounce-loops', loops);
+          this._shadowSlideContainer.style.setProperty('--bounce-height', height + 'px');
+          this._shadowSlideContainer.classList.add('leaflet-marker-shadow-slide-bouncing');
+
+          this._shadowScaleContainer.style.setProperty('--bounce-duration', duration);
+          this._shadowScaleContainer.style.setProperty('--bounce-delay', delay);
+          this._shadowScaleContainer.style.setProperty('--bounce-loops', loops);
+          this._shadowScaleContainer.classList.add('leaflet-marker-shadow-scale-bouncing');
+        }
+
+        const iconElement = this._iconElement || icon;
+        iconElement.classList.add('leaflet-marker-bouncing');
+
+        if (this._map) {
+          this.update();
+        }
+
+        this._bounceCallback = callback;
+
+        const duration = opts.duration || 1000;
+        const delay = opts.delay || 0;
+        const loops = opts.loop || 1;
+        const totalDuration = duration * loops + delay;
+
+        this._bounceTimeoutId = setTimeout(() => {
+          this._endCSSBounce();
+        }, totalDuration);
       },
 
       /**
-       * Rate of change of progress over time using the easeOut function.
-       * Many thanks to Robert Penner for this function
-       * @see {@link https://easings.net/#easeOutBounce}
+       * End CSS-based bounce animation and cleanup.
        * @private
-       * @param {float } progress - current progress on the curve
-       * @return {float} Next progress value
        */
-      _easeOutBounce: function(progress) {
-        if (progress < 1 / 2.75) {
-          return 7.5625 * progress * progress;
-        } else if (progress < 2 / 2.75) {
-          return 7.5625 * (progress -= 1.5 / 2.75) * progress + 0.75;
-        } else if (progress < 2.5 / 2.75) {
-          return 7.5625 * (progress -= 2.25 / 2.75) * progress + 0.9375;
-        } else {
-          return 7.5625 * (progress -= 2.625 / 2.75) * progress + 0.984375;
+      _endCSSBounce: function() {
+        const iconElement = this._iconElement || this._icon;
+        if (iconElement) {
+          iconElement.classList.remove('leaflet-marker-bouncing');
+          iconElement.style.removeProperty('--bounce-height');
+          iconElement.style.removeProperty('--bounce-duration');
+          iconElement.style.removeProperty('--bounce-delay');
+          iconElement.style.removeProperty('--bounce-loops');
+        }
+
+        if (this._shadowScaleContainer) {
+          this._shadowScaleContainer.classList.remove('leaflet-marker-shadow-scale-bouncing');
+          this._shadowScaleContainer.style.removeProperty('--bounce-duration');
+          this._shadowScaleContainer.style.removeProperty('--bounce-delay');
+          this._shadowScaleContainer.style.removeProperty('--bounce-loops');
+        }
+
+        if (this._shadowSlideContainer) {
+          this._shadowSlideContainer.classList.remove('leaflet-marker-shadow-slide-bouncing');
+          this._shadowSlideContainer.style.removeProperty('--bounce-duration');
+          this._shadowSlideContainer.style.removeProperty('--bounce-delay');
+          this._shadowSlideContainer.style.removeProperty('--bounce-loops');
+          this._shadowSlideContainer.style.removeProperty('--bounce-height');
+        }
+
+        if (this._bounceTimeoutId) {
+          clearTimeout(this._bounceTimeoutId);
+          this._bounceTimeoutId = null;
+        }
+
+        if (typeof this._bounceCallback === 'function') {
+          this._bounceCallback();
+          this._bounceCallback = null;
         }
       },
 
       /**
-       * Helper to get a drop point from a height.
+       * Calculate drop height from options.
        * @private
-       * @param {Number} [height=topY]
-       * @return {Point} Current new Point instance with new coordinates
+       * @param {Number} [height=-1] - Height option
+       * @return {Number} Height in pixels
        */
-      _getDropPoint: function(height) {
-        // Get current coordidates in pixel
-        this._point = this._toPoint(this._origLatlng);
-        let topY;
+      _getDropHeight: function(height) {
         if (height === undefined || height < 0) {
-          topY = this._toPoint(this._map.getBounds()._northEast).y;
-        } else {
-          topY = this._point.y - height;
+          const mapHeight = this._map.getSize().y;
+          return mapHeight / 2;
         }
-        return new Point(this._point.x, topY);
+        return height;
       },
 
       /**
@@ -241,11 +406,7 @@
         }
         options = options || {duration: 1000, height: -1, loop: 1};
 
-        // Keep original latitude, longitude and map center
-        this._origLatlng = this.getLatLng();
-        this._origMapCenter = this._map.project(this._map.getCenter());
-        this._dropPoint = this._getDropPoint(options.height);
-        this._bounceMotion(options, endCallback);
+        this._startCSSBounce(options, endCallback);
       },
 
       /**
@@ -253,12 +414,7 @@
        * @return {void}
        */
       stopBounce: function() {
-        // We may have modified the marker; so we need to place it where it
-        // belongs so next time its coordinates are not changed.
-        if (typeof this._origLatlng !== 'undefined') {
-          this.setLatLng(this._origLatlng);
-        }
-        cancelAnimationFrame(this._animationId);
+        this._endCSSBounce();
       },
 
       /**
@@ -274,7 +430,6 @@
       onAdd: function(map) {
         this._map = map;
 
-        // Call leaflet original method to add the Marker to the map.
         originalOnAdd.call(this, map);
 
         if (this.options.bounceOnAdd === true) {
@@ -297,6 +452,5 @@
     });
   }
 
-  // Initialize the plugin
   initBounceMarker();
 })();
