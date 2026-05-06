@@ -1,3 +1,10 @@
+## Objects
+
+<dl>
+<dt><a href="#Marker">Marker</a> : <code>object</code></dt>
+<dd></dd>
+</dl>
+
 ## Functions
 
 <dl>
@@ -26,6 +33,27 @@
 </dd>
 </dl>
 
+<a name="Marker"></a>
+
+## Marker : <code>object</code>
+**Kind**: global namespace  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| [bounceOnAdd] | <code>boolean</code> | <code>false</code> | bounce when added to the map. |
+| bounceOnAddOptions | [<code>bounceOnAddOptions</code>](#bounceOnAddOptions) |  | user defined options |
+| bounceOnAddCallback | [<code>bounceOnAddCallback</code>](#bounceOnAddCallback) |  | run at the end of the animation |
+
+**Example**  
+```js
+new Marker([48.85, 2.35],
+{
+  bounceOnAdd: true,
+  bounceOnAddOptions: {duration: 500, height: 100, loop: 2},
+  bounceOnAddCallback: function() {console.log("done");}
+}).addTo(map);
+```
 <a name="bounce"></a>
 
 ## bounce(options, endCallback)
@@ -40,8 +68,8 @@ Make a marker bounce at anytime you wish.
 
 **Example**  
 ```js
-marker = new L.Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
-marker.on('click', function () {
+marker = new Marker([48.85, 2.35], {bounceOnAdd: true}).addTo(map);
+marker.on('click', function() {
     marker.bounce({duration: 500, height: 100});
 });
 ```
@@ -60,11 +88,11 @@ Add a Marker to {map} and optionaly make it bounce.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| map | <code>L.Map</code> | Leaflet map to add the marker to |
+| map | <code>Map</code> | Leaflet map to add the marker to |
 
 **Example**  
 ```js
-L.marker([48.85, 2.35],
+new Marker([48.85, 2.35],
   {
     bounceOnAdd: true,
   }).addTo(map);
@@ -78,7 +106,7 @@ Stop any animation running and remove the Marker from {map}.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| map | <code>L.Map</code> | Leaflet map to add the marker to |
+| map | <code>Map</code> | Leaflet map to add the marker to |
 
 <a name="bounceOnAddOptions"></a>
 
